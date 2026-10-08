@@ -1,0 +1,93 @@
+import { expect, test, type Page } from '@playwright/test'
+
+async function completeHand(page: Page) {
+  for (let action = 0; action < 80; action++) {
+    if (await page.getByRole('button', { name: 'Следующая раздача' }).count() || await page.getByRole('button', { name: 'Начать новую сессию' }).count()) return
+    const passive = page.getByRole('button', { name: /^(Check|Call \d+)$/ })
+    if (await passive.count() && await passive.isEnabled()) await passive.click()
+    else await page.waitForTimeout(200)
+  }
+  throw new Error('Hand did not finish')
+}
+
+test('table renders without browser errors or horizontal overflow', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.goto('./')
+  await expect(page.getByRole('heading', { name: 'Покер — это решения.' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
+  await expect(page.getByRole('button', { name: 'Call 1', exact: true })).toBeEnabled()
+  await expect(page.locator('.seat-hero .playing-card')).toHaveCount(2)
+  await expect(page.locator('.seat-ai .card-back')).toHaveCount(2)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  expect(errors).toEqual([])
+})
+
+test('fold saves once, export is labelled, reload retains history and button rotates', async ({ page }) => {
+  await page.goto('./')
+  await page.getByRole('button', { name: 'Fold', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Следующая раздача' })).toBeEnabled()
+  await page.getByRole('button', { name: /История рук/ }).click()
+  await expect(page.getByRole('button', { name: /Раздача 1, -1 фишек/ })).toBeVisible()
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: /Экспорт TXT/ }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toContain('poker-lab-training')
+  const stream = await download.createReadStream()
+  const chunks: Buffer[] = []
+  for await (const chunk of stream!) chunks.push(chunk)
+  const text = Buffer.concat(chunks).toString('utf8')
+  expect(text).toContain('TRAINING ONLY')
+  expect(text).toContain('Total pot 2 | Rake 0')
+  expect(text).toContain('compatibility is UNVERIFIED')
+  await page.reload()
+  await page.getByRole('button', { name: /История рук/ }).click()
+  await expect(page.locator('.hand-entry')).toHaveCount(1)
+  await page.getByRole('button', { name: 'Тренировка', exact: true }).click()
+  await page.getByRole('button', { name: 'Следующая раздача' }).click()
+  await expect(page.locator('.hand-number')).toContainText('#002')
+  await expect(page.getByLabel('AdaptiveAI: Button / Small Blind')).toBeVisible()
+})
+
+test('plays a full hand against the AI and preserves all 400 chips', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.goto('./')
+  await completeHand(page)
+  await expect(page.locator('.result-net')).toBeVisible()
+  await expect(page.getByRole('button', { name: /^(Следующая раздача|Начать новую сессию)$/ })).toBeEnabled()
+  const game = await page.evaluate(() => JSON.parse(sessionStorage.getItem('poker-lab-session-v1')!))
+  expect(game.result).toBeTruthy()
+  expect(game.players[0].stack + game.players[1].stack).toBe(400)
+  expect(game.result.reason === 'fold' || game.board.length === 5).toBe(true)
+  if (game.result.reason === 'showdown') await expect(page.locator('.seat-ai .card-back')).toHaveCount(0)
+  await page.getByRole('button', { name: /История рук/ }).click()
+  await expect(page.locator('.hand-entry')).toHaveCount(1)
+  expect(errors).toEqual([])
+})
+
+test('sizing controls, history filters and reset work', async ({ page }) => {
+  await page.goto('./')
+  const amount = page.getByLabel('Размер ставки в фишках')
+  await amount.fill('8')
+  await expect(page.getByRole('button', { name: 'Raise to 8' })).toBeEnabled()
+  await page.getByRole('button', { name: 'Raise to 8' }).click()
+  await expect(page.locator('.table-activity')).toContainText('Hero · Raise to 8')
+  await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeDisabled()
+  await completeHand(page)
+  await page.getByRole('button', { name: /История рук/ }).click()
+  await expect(page.locator('.hand-entry')).toHaveCount(1)
+  await page.getByLabel('Поиск раздачи').fill('no-such-hand')
+  await expect(page.getByRole('heading', { name: 'Раздачи не найдены' })).toBeVisible()
+  await page.getByLabel('Поиск раздачи').clear()
+  await page.locator('.hand-entry>button').click()
+  await expect(page.locator('.event-list')).toBeVisible()
+  await page.getByRole('button', { name: 'Тренировка', exact: true }).click()
+  await page.getByRole('button', { name: 'Новая сессия', exact: true }).click()
+  await expect(page.getByRole('dialog')).toBeVisible()
+  await page.getByRole('dialog').getByRole('button', { name: 'Новая сессия', exact: true }).click()
+  await expect(page.locator('.hand-number')).toContainText('#001')
+  await expect(page.getByRole('button', { name: 'Call 1', exact: true })).toBeEnabled()
+  await page.getByRole('button', { name: /История рук/ }).click()
+  await expect(page.locator('.hand-entry')).toHaveCount(1)
+})
