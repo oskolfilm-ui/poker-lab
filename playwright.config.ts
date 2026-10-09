@@ -8,7 +8,8 @@ export default defineConfig({
   timeout: 45_000,
   fullyParallel: false,
   workers: 2,
-  reporter: 'list',
+  // Publish individual failures as check annotations when artifact downloads are unavailable.
+  reporter: process.env.CI ? [['list'], ['github']] : 'list',
   use: {
     baseURL: 'http://127.0.0.1:5173/poker-lab/',
     trace: 'retain-on-failure',

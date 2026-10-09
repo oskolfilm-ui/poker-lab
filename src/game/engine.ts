@@ -1,4 +1,5 @@
 import { compareHands, createDeck, evaluate, secureRandom, shuffle, type Card, type Random } from './cards'
+import { calculateRake, validRake, type RakeConfig } from './rake'
 
 export type PlayerIndex = 0 | 1
 export type Street = 'preflop' | 'flop' | 'turn' | 'river'
@@ -31,6 +32,7 @@ export interface HandResult {
   payouts: [number, number]
   pot: number
   descriptions: [string, string] | null
+  rake?: number
 }
 
 export interface GameState {
@@ -51,6 +53,7 @@ export interface GameState {
   raiseAllowed: [boolean, boolean]
   events: HandEvent[]
   result: HandResult | null
+  rakeConfig?: RakeConfig
 }
 
 export interface LegalActions {
@@ -62,7 +65,7 @@ export interface LegalActions {
 }
 
 export const potSize = (state: GameState) => state.players[0].committed + state.players[1].committed
-export const chipsInPlay = (state: GameState) => state.players[0].stack + state.players[1].stack + (state.result ? 0 : potSize(state))
+export const chipsInPlay = (state: GameState) => state.players[0].stack + state.players[1].stack + (state.result ? state.result.rake ?? 0 : potSize(state))
 
 export function legalActions(state: GameState, player: PlayerIndex): LegalActions {
   const actor = state.players[player]
@@ -100,6 +103,7 @@ function returnUncalled(state: GameState) {
 }
 
 function finish(state: GameState, folded?: PlayerIndex) {
+  if (state.result) return
   returnUncalled(state)
   let winners: PlayerIndex[]
   let descriptions: [string, string] | null = null
@@ -115,15 +119,17 @@ function finish(state: GameState, folded?: PlayerIndex) {
     }
   }
   const pot = potSize(state)
+  const rake = calculateRake(pot, state.board.length >= 3, state.rakeConfig)
+  const distributable = pot - rake
   const payouts: [number, number] = [0, 0]
-  for (const player of winners) payouts[player] = Math.floor(pot / winners.length)
+  for (const player of winners) payouts[player] = Math.floor(distributable / winners.length)
   // The first seat clockwise from the button receives the odd chip.
-  if (pot % winners.length) payouts[other(state.dealer)]++
+  if (distributable % winners.length) payouts[other(state.dealer)]++
   for (const player of [0, 1] as const) {
     state.players[player].stack += payouts[player]
     if (payouts[player]) state.events.push({ type: 'award', player, amount: payouts[player] })
   }
-  state.result = { reason: folded === undefined ? 'showdown' : 'fold', winners, payouts, pot, descriptions }
+  state.result = { reason: folded === undefined ? 'showdown' : 'fold', winners, payouts, pot, descriptions, rake }
   state.toAct = null
   state.endedAt = new Date().toISOString()
 }
@@ -176,9 +182,11 @@ export interface StartHandOptions {
   deck?: Card[]
   id?: string
   startedAt?: string
+  rakeConfig?: RakeConfig
 }
 
 export function startHand(options: StartHandOptions = {}): GameState {
+  if (options.rakeConfig && !validRake(options.rakeConfig)) throw new Error('Некорректная настройка рейка.')
   const stacks = options.stacks ?? [200, 200]
   if (stacks.some(stack => !Number.isSafeInteger(stack) || stack < 1)) throw new Error('Оба игрока должны иметь фишки.')
   const dealer = options.dealer ?? 0
@@ -195,6 +203,7 @@ export function startHand(options: StartHandOptions = {}): GameState {
     dealer,
     players: [makePlayer(0), makePlayer(1)],
     board: [], deck, street: 'preflop', toAct: dealer,
+    ...(options.rakeConfig ? { rakeConfig: { ...options.rakeConfig } } : {}),
     currentBet: 0, minRaise: BLINDS.big, acted: [false, false], raiseAllowed: [true, true], events: [], result: null,
   }
   for (let round = 0; round < 2; round++) {
@@ -245,7 +254,7 @@ export function applyAction(input: GameState, player: PlayerIndex, action: Actio
   return state
 }
 
-export function nextHand(state: GameState): GameState {
+export function nextHand(state: GameState, rakeConfig = state.rakeConfig): GameState {
   if (!state.result) throw new Error('Сначала завершите текущую раздачу.')
-  return startHand({ number: state.number + 1, dealer: other(state.dealer), stacks: [state.players[0].stack, state.players[1].stack] })
+  return startHand({ number: state.number + 1, dealer: other(state.dealer), stacks: [state.players[0].stack, state.players[1].stack], rakeConfig })
 }

@@ -1,4 +1,5 @@
 import { nextHand, other, startHand, type GameState, type PlayerIndex } from './engine'
+import type { RakeConfig } from './rake'
 
 export interface HandContext { sessionId: string; matchId: string }
 
@@ -9,9 +10,9 @@ export function matchWinner(game: Pick<GameState, 'players' | 'result'>): Player
   return null
 }
 
-export function advanceHand(game: GameState): GameState {
+export function advanceHand(game: GameState, rakeConfig: RakeConfig | undefined = game.rakeConfig): GameState {
   if (!game.result) throw new Error('Сначала завершите текущую раздачу.')
-  return matchWinner(game) === null ? nextHand(game) : startHand({
-    number: game.number + 1, dealer: other(game.dealer), stacks: [200, 200],
+  return matchWinner(game) === null ? nextHand(game, rakeConfig) : startHand({
+    number: game.number + 1, dealer: other(game.dealer), stacks: [200, 200], rakeConfig,
   })
 }
