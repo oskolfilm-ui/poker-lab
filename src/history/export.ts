@@ -2,7 +2,7 @@ import { trackerCard } from '../game/cards'
 import { other, type HandEvent } from '../game/engine'
 import type { CompletedHand } from './store'
 
-export const TRAINING_NOTICE = '# POKER LAB — TRAINING ONLY. These are simulated hands, not real PokerStars games.\n# Unofficial PokerStars-style text export. Hand2Note 4 compatibility is UNVERIFIED pending a real import test.\n# Chips have no monetary value. No rake.\n'
+export const TRAINING_NOTICE = '# POKER LAB — TRAINING ONLY. These are simulated hands, not real PokerStars games.\n# Unofficial PokerStars-style text export. Hand2Note 4 compatibility is UNVERIFIED pending a real import test.\n# Chips have no monetary value. Rake is reported separately for each hand.\n'
 
 const cards = (values: readonly string[]) => `[${values.map(value => trackerCard(value as Parameters<typeof trackerCard>[0])).join(' ')}]`
 const dateUTC = (value: string) => new Date(value).toISOString().slice(0, 19).replace('T', ' ').replaceAll('-', '/') + ' UTC'
@@ -41,7 +41,7 @@ export function exportHand(hand: CompletedHand): string {
       lines.push(`${names[event.player]} collected ${event.amount} from pot`)
     }
   }
-  lines.push('*** SUMMARY ***', `Total pot ${hand.result.pot} | Rake 0`)
+  lines.push('*** SUMMARY ***', `Total pot ${hand.result.pot} | Rake ${hand.result.rake ?? 0}`)
   if (hand.board.length) lines.push(`Board ${cards(hand.board)}`)
   const fold = hand.events.find((event): event is Extract<HandEvent, { type: 'action' }> => event.type === 'action' && event.action === 'fold')
   for (const index of [0, 1] as const) {

@@ -46,5 +46,5 @@ export function PokerTable({ game, difficulty, difficultyDisabled, difficultyErr
     </div>
     <Seat game={game} index={0} />
     <div className="table-footnote">Тренировочная игра<span>Без реальных денег</span></div>
-  </div>{difficultyError && <p className="table-difficulty-error" role="alert">{difficultyError}</p>}</>
+  </div><div className="rake-display" data-testid="hand-rake">{game.result ? `Рейк: ${game.result.rake ?? 0} фишек · выплата ${game.result.pot - (game.result.rake ?? 0)}` : game.rakeConfig?.enabled ? `Рейк ${game.rakeConfig.percent}% · кэп ${game.rakeConfig.capBB} BB${game.rakeConfig.noFlopNoDrop ? ' · No flop, no drop' : ''}` : 'Без рейка'}</div>{difficultyError && <p className="table-difficulty-error" role="alert">{difficultyError}</p>}</>
 }

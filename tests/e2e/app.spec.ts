@@ -78,7 +78,7 @@ test('plays a full hand against the AI and preserves all 400 chips', async ({ pa
   await expect(page.getByRole('button', { name: /^(Следующая раздача|Следующий матч)$/ })).toBeEnabled()
   const game = await page.evaluate(() => JSON.parse(sessionStorage.getItem('poker-lab-session-v1')!))
   expect(game.result).toBeTruthy()
-  expect(game.players[0].stack + game.players[1].stack).toBe(400)
+  expect(game.players[0].stack + game.players[1].stack + (game.result.rake ?? 0)).toBe(400)
   expect(game.result.reason === 'fold' || game.board.length === 5).toBe(true)
   if (game.result.reason === 'showdown') await expect(page.locator('.seat-ai .card-back')).toHaveCount(0)
   await page.getByRole('button', { name: /История рук/ }).click()

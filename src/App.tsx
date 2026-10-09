@@ -6,6 +6,8 @@ import { decisionView } from './game/ai/view'
 import type { AIRequest, AIResponse } from './game/ai/protocol'
 import { AISettings } from './components/AISettings'
 import { useDifficulty } from './hooks/useDifficulty'
+import { readRake, useRake } from './hooks/useRake'
+import { RakeSettings } from './components/RakeSettings'
 import { PokerTable } from './components/PokerTable'
 import { MatchScoreboard } from './components/MatchScoreboard'
 import { ResultsChart } from './components/ResultsChart'
@@ -21,7 +23,7 @@ const CONTEXT_KEY = 'poker-lab-context-v1'
 interface Session { game: GameState; context: HandContext; paused: boolean }
 const newContext = (): HandContext => ({ sessionId: crypto.randomUUID(), matchId: crypto.randomUUID() })
 function initialSession(): Session {
-  let game = startHand()
+  let game = startHand({ rakeConfig: readRake() })
   let context = newContext()
   let paused = false
   try {
@@ -45,6 +47,7 @@ export default function App() {
   const [sessionWarning, setSessionWarning] = useState(false)
   const { hands, statistics, profile: heroProfile, status, savedHandId, retry } = useHistory(game, context)
   const ai = useDifficulty()
+  const rake = useRake()
   const saved = !!game.result && status === 'saved' && savedHandId === game.id
   const winner = matchWinner(game)
   useEffect(() => {
@@ -81,7 +84,7 @@ export default function App() {
   const beginNext = () => {
     if (!saved) return
     try {
-      const updated = advanceHand(game)
+      const updated = advanceHand(game, rake.config)
       setSession(current => current.game.id !== game.id ? current : {
         ...current, game: updated,
         context: winner === null ? current.context : { ...current.context, matchId: crypto.randomUUID() },
@@ -112,6 +115,7 @@ export default function App() {
         <SessionResetButton disabled={!!game.result && !saved} onClick={() => setDialog('session')} />
       </section>
       {view === 'practice' ? <>
+        <RakeSettings config={rake.config} current={game.rakeConfig} error={rake.error} onChange={rake.change} />
         <AISettings difficulty={ai.difficulty} profile={heroProfile} disabled={!ai.ready || ai.saving} error={ai.error} onChange={value => void ai.change(value)} />
         <div className="play-surface">{scoreboard}
         <section className="game-layout" aria-label="Покерный тренажёр"><div className="table-column"><div className="table-heading"><div><span className="table-tab"><Layers3 size={19} />Heads-up</span><span className="table-heading-secondary">2 игрока · 100 BB старт</span></div><div className="hand-number">Раздача <strong>#{String(game.number).padStart(3, '0')}</strong></div></div><PokerTable game={game} difficulty={ai.difficulty} difficultyDisabled={!ai.ready || ai.saving} difficultyError={ai.error} onDifficultyChange={value => void ai.change(value)} /><div className="table-activity" aria-live="polite"><span className="activity-label">ЗА СТОЛОМ</span><div>{recent.length ? recent.map((event, index) => <span key={`${game.id}-${game.events.length}-${index}`} className={index === recent.length - 1 ? 'latest-event' : ''}>{eventText(event)}</span>) : <span>Блайнды поставлены. Карты розданы — можно начинать.</span>}</div></div><div className="table-bottom"><span><ShieldCheck size={17} />{status === 'saving' ? 'Сохраняем историю и статистику…' : status === 'error' ? 'История ожидает сохранения' : 'История рук сохраняется автоматически'}</span><button className="text-button" onClick={() => setView('history')}>Открыть историю<ArrowUpRight size={17} /></button></div></div><ActionPanel difficulty={ai.difficulty} game={game} onAction={act} onNext={beginNext} saving={!saved} paused={paused} seconds={seconds} /></section></div>
@@ -120,7 +124,7 @@ export default function App() {
       <ResultsChart hands={hands} sessionId={context.sessionId} loading={status === 'loading'} />
     </main>
     <footer className="site-footer"><span>POKER LAB<span className="footer-version">v{__APP_VERSION__} · {__BUILD_REVISION__.slice(0, 7)}</span></span><span>Создано для осознанной игры.</span><span>TRAINING ONLY<ChevronRight size={16} /></span></footer>
-    {dialog === 'session' && <ConfirmDialog title="Начнём новую сессию?" description={`У каждого игрока снова будет 200 фишек, счётчик раздач в сессии обнулится.${!game.result ? ' Незавершённая раздача не попадёт в историю.' : ''} Общий счёт матчей, всего раздач и история сохранятся.`} confirmLabel="Новая сессия" onClose={() => setDialog(null)} onConfirm={() => { setSession({ game: startHand(), context: newContext(), paused }); setDialog(null); setError('') }} />}
+    {dialog === 'session' && <ConfirmDialog title="Начнём новую сессию?" description={`У каждого игрока снова будет 200 фишек, счётчик раздач в сессии обнулится.${!game.result ? ' Незавершённая раздача не попадёт в историю.' : ''} Общий счёт матчей, всего раздач и история сохранятся.`} confirmLabel="Новая сессия" onClose={() => setDialog(null)} onConfirm={() => { setSession({ game: startHand({ rakeConfig: rake.config }), context: newContext(), paused }); setDialog(null); setError('') }} />}
     {dialog === 'score' && <ConfirmDialog title="Сбросить общий счёт матчей?" description="Счёт HERO : AI станет 0 : 0. История рук, оба счётчика раздач и текущий матч сохранятся." confirmLabel="Сбросить счёт" busy={resettingScore} onClose={() => setDialog(null)} onConfirm={() => void clearScore()} />}
   </>
 }

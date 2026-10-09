@@ -6,6 +6,7 @@ import { extname, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, expect } from '@playwright/test'
 import { facingMatchAllIn } from '../tests/fixtures/match.ts'
+import { DEFAULT_RAKE } from '../src/game/rake.ts'
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url))
 const dist = resolve(projectRoot, 'dist')
@@ -133,7 +134,7 @@ try {
     assert(finished, 'Production game did not complete a hand')
     const game = await page.evaluate(() => JSON.parse(sessionStorage.getItem('poker-lab-session-v1')))
     assert(game.result)
-    assert.equal(game.players[0].stack + game.players[1].stack, 400)
+    assert.equal(game.players[0].stack + game.players[1].stack + (game.result.rake ?? 0), 400)
     assert(game.result.reason === 'fold' || game.board.length === 5)
     await expect(page.getByTestId('total-hands')).toHaveText('1')
     await expect(page.getByTestId('result-hands')).toHaveText('1')
@@ -149,7 +150,7 @@ try {
     const exported = Buffer.concat(chunks).toString('utf8')
     assert(exported.includes('TRAINING ONLY'))
     assert(exported.includes('compatibility is UNVERIFIED'))
-    assert(exported.includes(`Total pot ${game.result.pot} | Rake 0`))
+    assert(exported.includes(`Total pot ${game.result.pot} | Rake ${game.result.rake ?? 0}`))
     await page.reload()
     await page.getByRole('button', { name: /История рук/ }).click()
     await visible(page.locator('.hand-entry'))
@@ -179,15 +180,16 @@ try {
         sessionStorage.setItem('poker-lab-session-v1', JSON.stringify(game))
         sessionStorage.setItem('poker-lab-context-v1', JSON.stringify({ sessionId: 'production-session', matchId: 'production-match', paused: false }))
       }
-    }, facingMatchAllIn(winner))
+    }, facingMatchAllIn(winner, undefined, DEFAULT_RAKE))
     await page.goto(`${site}?v=${manifest.revision}`)
     await expect(page.getByTestId('result-hands')).toHaveText('0')
     await page.getByRole('button', { name: 'Call 198', exact: true }).click()
     const score = winner === 0 ? '1 : 0' : '0 : 1'
     await expect(page.getByTestId('match-score')).toContainText(score)
     await expect(page.locator('.match-status')).toContainText(winner === 0 ? 'Hero выиграл матч!' : 'AdaptiveAI выиграл матч!')
-    await expect(page.getByTestId('result-net-bb')).toHaveText(winner === 0 ? '+100 BB' : '-100 BB')
-    await expect(page.getByTestId('result-bb100')).toHaveText(winner === 0 ? '+10 000 bb/100' : '-10 000 bb/100')
+    await expect(page.getByTestId('result-net-bb')).toHaveText(winner === 0 ? '+98 BB' : '-100 BB')
+    await expect(page.getByTestId('result-bb100')).toHaveText(winner === 0 ? '+9 800 bb/100' : '-10 000 bb/100')
+    await expect(page.getByTestId('hand-rake')).toHaveText('Рейк: 4 фишек · выплата 396')
     await page.screenshot({ path: resolve(output, `match-${winner === 0 ? 'hero' : 'ai'}.png`), fullPage: true })
     await page.clock.runFor(2999)
     await expect(page.locator('.result-net')).toBeVisible()
@@ -207,7 +209,7 @@ try {
     await expect(page.getByTestId('match-score')).toContainText(score)
     await page.getByRole('button', { name: 'Всё время', exact: true }).click()
     await expect(page.getByTestId('result-hands')).toHaveText('1')
-    await expect(page.getByTestId('result-net-bb')).toHaveText(winner === 0 ? '+100 BB' : '-100 BB')
+    await expect(page.getByTestId('result-net-bb')).toHaveText(winner === 0 ? '+98 BB' : '-100 BB')
     // New tabs share IndexedDB but have independent sessions.
     const another = await context.newPage()
     await another.goto(`${site}?v=${manifest.revision}`)
