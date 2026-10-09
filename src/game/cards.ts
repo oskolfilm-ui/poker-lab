@@ -1,4 +1,6 @@
-import { Hand } from 'pokersolver'
+import pokerSolver from 'pokersolver'
+
+const { Hand } = pokerSolver
 
 export const RANKS = '23456789TJQKA'
 export const SUITS = ['s', 'h', 'd', 'c'] as const

@@ -62,6 +62,7 @@ try {
       }
     })
     await page.goto(origin + mount)
+    await page.getByRole('button', { name: 'Пауза автоигры', exact: true }).click()
     await visible(page.getByRole('heading', { name: 'Покер — это решения.' }))
     await visible(page.locator('.table-scene'))
     await page.evaluate(() => document.fonts.ready)
@@ -75,7 +76,7 @@ try {
     // Test the compiled game: check/call against the actual AI until completion.
     let finished = false
     for (let attempt = 0; attempt < 140; attempt++) {
-      const next = page.getByRole('button', { name: /^(Следующая раздача|Начать новую сессию)$/ })
+      const next = page.getByRole('button', { name: /^(Следующая раздача|Следующий матч)$/ })
       if (await next.count() && await next.isEnabled()) { finished = true; break }
       const passive = page.getByRole('button', { name: /^(Check|Call \d+)$/ })
       if (await passive.count() && await passive.isEnabled()) await passive.click()
