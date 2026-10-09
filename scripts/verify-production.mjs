@@ -100,6 +100,18 @@ try {
     await expect(page.locator('.footer-version')).toContainText(manifest.revision.slice(0, 7))
     await expect(page.locator('.footer-version')).toContainText(`v${manifest.version}`)
     await expect(page.getByLabel('Сложность AdaptiveAI').locator('option')).toHaveCount(5)
+    const tableDifficulty = page.getByRole('combobox', { name: 'Сложность ИИ на столе', exact: true })
+    await expect(tableDifficulty.locator('option')).toHaveText(['Beginner', 'Regular', 'Strong Reg', 'Expert', 'Nemesis'])
+    for (const level of ['Beginner', 'Regular', 'Strong Reg', 'Expert', 'Nemesis']) {
+      await tableDifficulty.selectOption(level)
+      await expect(page.getByTestId('current-difficulty')).toHaveText(level)
+      await expect(page.getByLabel('Сложность AdaptiveAI', { exact: true })).toHaveValue(level)
+    }
+    await page.evaluate(() => document.fonts.ready)
+    await page.reload()
+    await expect(tableDifficulty).toHaveValue('Nemesis')
+    await tableDifficulty.selectOption('Strong Reg')
+    await expect(page.getByTestId('current-difficulty')).toHaveText('Strong Reg')
     await expect(page.getByTestId('result-hands')).toHaveText('0')
     await page.evaluate(() => document.fonts.ready)
     assert.equal(await page.locator('.seat-hero .playing-card').count(), 2)

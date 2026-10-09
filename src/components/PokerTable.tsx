@@ -1,4 +1,5 @@
 import type { Difficulty } from '../game/ai/levels'
+import { DifficultySelect } from './DifficultySelect'
 import { Bot, UserRound, Check, Trophy } from 'lucide-react'
 import { Card } from './Card'
 import { potSize, streetLabels, type GameState, type PlayerIndex } from '../game/engine'
@@ -27,11 +28,13 @@ function Seat({ game, index }: { game: GameState; index: PlayerIndex }) {
   </div>
 }
 
-export function PokerTable({ game, difficulty }: { game: GameState; difficulty: Difficulty }) {
+export function PokerTable({ game, difficulty, difficultyDisabled, difficultyError, onDifficultyChange }: {
+  game: GameState; difficulty: Difficulty; difficultyDisabled: boolean; difficultyError: string; onDifficultyChange: (value: Difficulty) => void
+}) {
   const pot = game.result?.pot ?? potSize(game)
-  return <div className="table-scene">
+  return <><div className="table-scene">
     <div className="table-grain" />
-    <div className="table-corner"><span className="live-dot" /> ADAPTIVE AI <span>{difficulty}</span></div>
+    <div className="table-corner table-ai-control"><span className="live-dot" /><label htmlFor="table-ai-difficulty">ADAPTIVE AI</label><DifficultySelect id="table-ai-difficulty" label="Сложность ИИ на столе" difficulty={difficulty} disabled={difficultyDisabled} onChange={onDifficultyChange} /></div>
     <div className="table-format">NO-LIMIT HOLD’EM <span>1 / 2</span></div>
     <div className="felt"><div className="felt-line" /><div className="felt-brand">POKER LAB</div></div>
     <Seat game={game} index={1} />
@@ -43,5 +46,5 @@ export function PokerTable({ game, difficulty }: { game: GameState; difficulty: 
     </div>
     <Seat game={game} index={0} />
     <div className="table-footnote">Тренировочная игра<span>Без реальных денег</span></div>
-  </div>
+  </div>{difficultyError && <p className="table-difficulty-error" role="alert">{difficultyError}</p>}</>
 }

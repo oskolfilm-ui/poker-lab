@@ -1,4 +1,5 @@
-import { LEVELS, isDifficulty, type Difficulty } from '../game/ai/levels'
+import type { Difficulty } from '../game/ai/levels'
+import { DifficultySelect } from './DifficultySelect'
 import { METRICS, rateEstimate, confirmedDeviation, type HeroProfile, type Metric } from '../game/ai/profile'
 
 const descriptions: Record<Difficulty, string> = {
@@ -14,7 +15,8 @@ export function AISettings({ difficulty, profile, disabled, error, onChange }: {
   const leaks = Object.keys(METRICS).filter(key => confirmedDeviation(profile, key as Metric) !== 0).length
   return <section className="ai-settings" aria-label="Настройки AdaptiveAI">
     <div className="difficulty-control"><label htmlFor="ai-difficulty">Сложность AdaptiveAI</label>
-      <select id="ai-difficulty" value={difficulty} disabled={disabled} onChange={event => { if (isDifficulty(event.target.value)) onChange(event.target.value) }}>{LEVELS.map(level => <option key={level}>{level}</option>)}</select>
+      <DifficultySelect id="ai-difficulty" label="Сложность AdaptiveAI" difficulty={difficulty} disabled={disabled} onChange={onChange} />
+      <p className="difficulty-timing">Выбор применяется к следующему решению ИИ, в том числе в текущей раздаче.</p>
       <p>{descriptions[difficulty]}</p>{error && <p role="alert" className="text-negative">{error}</p>}
     </div>
     <details className="hero-model"><summary>Модель Hero · <span data-testid="profile-hands">{profile.hands}</span> рук</summary>
