@@ -30,7 +30,7 @@ for (const level of LEVELS) {
     const stacks = await page.evaluate(() => JSON.parse(sessionStorage.getItem('poker-lab-session-v1')!).players.map((player: { stack: number }) => player.stack))
     expect(stacks[0] + stacks[1]).toBe(400)
     await expect(page.getByTestId('total-hands')).toHaveText('1')
-    await expect(page.getByTestId('match-score')).toContainText('0 : 0')
+    await expect(page.getByTestId('match-score')).toContainText(`${stacks[1] === 0 ? 1 : 0} : ${stacks[0] === 0 ? 1 : 0}`)
     await page.getByLabel('Сложность AdaptiveAI', { exact: true }).selectOption('Regular')
     await expect(select).toHaveValue('Regular')
     const control = await select.boundingBox(), seat = await page.locator('.seat-ai').boundingBox()
