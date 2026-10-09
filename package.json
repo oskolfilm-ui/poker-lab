@@ -1,9 +1,11 @@
 {
   "name": "poker-lab",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.1",
   "type": "module",
-  "engines": { "node": "^20.19.0 || >=22.12.0" },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -12,13 +14,17 @@
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",
     "test:e2e": "playwright test",
-    "test:production": "npm run build && node scripts/verify-production.mjs"
+    "test:production": "npm run build && tsx scripts/verify-production.mjs",
+    "test:published": "tsx scripts/verify-production.mjs --published",
+    "test:ai": "tsx scripts/ai-matrix.ts",
+    "test:ai:pilot": "tsx scripts/ai-trials.ts"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
     "dexie": "^4.2.1",
     "lucide-react": "^0.468.0",
+    "phe": "^0.6.0",
     "pokersolver": "^2.1.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
@@ -30,6 +36,7 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.0",
     "fake-indexeddb": "^6.2.4",
+    "tsx": "^4.23.15",
     "typescript": "~5.9.3",
     "vite": "^7.2.2",
     "vitest": "^3.2.4"

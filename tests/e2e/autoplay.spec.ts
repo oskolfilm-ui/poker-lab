@@ -57,8 +57,10 @@ test('pause survives reload and prevents transitions; resuming and manual next b
   await expect(page.locator('.hand-number')).toContainText('#002')
   await page.getByRole('button', { name: 'Пауза автоигры', exact: true }).click()
   await page.clock.runFor(1000)
-  // Either AI has folded or Hero can now end the hand.
+  // Worker replies asynchronously. Wait for its result before choosing a
+  // locator: Fold can disappear if the AI folds during its opening decision.
   const fold = page.getByRole('button', { name: 'Fold', exact: true })
+  await expect.poll(async () => await page.locator('.next-hand').count() > 0 || (await fold.count() > 0 && await fold.isEnabled())).toBe(true)
   if (await fold.count()) await fold.click()
   await expect(page.getByRole('button', { name: 'Следующая раздача', exact: true })).toBeEnabled()
   await page.getByRole('button', { name: 'Следующая раздача', exact: true }).click()
@@ -161,7 +163,7 @@ test('IndexedDB failure prevents auto advance and retry records the pending hand
   })
   await page.goto('./')
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
-  await expect(page.getByRole('alert')).toContainText('Автопереход остановлен')
+  await expect(page.getByRole('alert').filter({ hasText: 'IndexedDB' })).toContainText('Автопереход остановлен')
   await page.clock.runFor(5000)
   await expect(page.locator('.hand-number')).toContainText('#001')
   await expect(page.locator('.next-hand')).toBeDisabled()

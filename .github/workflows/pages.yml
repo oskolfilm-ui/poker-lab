@@ -2,7 +2,7 @@ name: Publish POKER LAB to GitHub Pages
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/adaptive-ai-levels]
   push:
     branches: [main]
   workflow_dispatch:
@@ -17,6 +17,28 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  ai-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: 10,000 hands per level plus legacy control and continuous matches
+        run: npm run test:ai
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ai-validation
+          path: |
+            test-results/ai/
+            reports/ai-validation.json
+          if-no-files-found: error
+          retention-days: 14
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -47,8 +69,10 @@ jobs:
 
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: build
+    needs: [build, ai-validation]
     runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -56,3 +80,30 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify-published:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Verify the actual published commit and browser match/statistics scenarios
+        env:
+          POKER_LAB_URL: ${{ needs.deploy.outputs.page_url }}
+          EXPECTED_REVISION: ${{ github.sha }}
+        run: npm run test:published
+      - name: Save public-site verification screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: published-verification
+          path: test-results/published/
+          if-no-files-found: ignore
+          retention-days: 14

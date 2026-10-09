@@ -1,0 +1,56 @@
+{
+  "baselineCommit": "ef854282cc4cab8a246bb1a4c0a408380b8e6a3b",
+  "protocol": "fresh 100BB stacks; alternating button; deterministic independent RNG streams; 4 independently authored peers",
+  "seed": 20261009,
+  "elapsedSeconds": 12.286474829000001,
+  "results": [
+    {
+      "opponent": "tight-value",
+      "hands": 250,
+      "bbPer100": 111.4,
+      "ci95": [
+        -135.47114992505155,
+        358.27114992505153
+      ],
+      "aiBusts": 4,
+      "illegal": 0,
+      "decisions": 1029
+    },
+    {
+      "opponent": "calling-station",
+      "hands": 250,
+      "bbPer100": -36.8,
+      "ci95": [
+        -221.87307020668055,
+        148.2730702066806
+      ],
+      "aiBusts": 1,
+      "illegal": 0,
+      "decisions": 1766
+    },
+    {
+      "opponent": "pressure",
+      "hands": 250,
+      "bbPer100": 705.1999999999999,
+      "ci95": [
+        30.022606647317957,
+        1380.3773933526818
+      ],
+      "aiBusts": 21,
+      "illegal": 0,
+      "decisions": 1760
+    },
+    {
+      "opponent": "balanced",
+      "hands": 250,
+      "bbPer100": -73.6,
+      "ci95": [
+        -321.9380085363317,
+        174.73800853633173
+      ],
+      "aiBusts": 2,
+      "illegal": 0,
+      "decisions": 1182
+    }
+  ]
+}

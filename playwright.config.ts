@@ -3,6 +3,8 @@ import { existsSync } from 'node:fs'
 
 export default defineConfig({
   testDir: './tests/e2e',
+  // Browser cleanup must not remove independently running AI benchmark output.
+  outputDir: './test-results/browser',
   timeout: 45_000,
   fullyParallel: false,
   workers: 2,

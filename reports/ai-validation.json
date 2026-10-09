@@ -1,0 +1,2481 @@
+{
+  "seed": 3907149137,
+  "handsPerLevel": 10000,
+  "totalPerformanceHands": 60000,
+  "confidence": "95% normal intervals over duplicate-card pair blocks; paired differences on identical decks; no multiple-comparison correction",
+  "nemesisVsExpert": [
+    {
+      "opponent": "tight-value",
+      "bbPer100": 18.5,
+      "ci95": [
+        -3.815019496206837,
+        40.81501949620684
+      ]
+    },
+    {
+      "opponent": "calling-station",
+      "bbPer100": -18.52,
+      "ci95": [
+        -37.15624376017564,
+        0.11624376017564586
+      ]
+    },
+    {
+      "opponent": "pressure",
+      "bbPer100": 257.18,
+      "ci95": [
+        174.14957832493553,
+        340.2104216750645
+      ]
+    },
+    {
+      "opponent": "balanced",
+      "bbPer100": -1.48,
+      "ci95": [
+        -17.670125976990015,
+        14.710125976990014
+      ]
+    }
+  ],
+  "trials": [
+    {
+      "level": "Legacy",
+      "pilot": false,
+      "hands": 10000,
+      "seed": 3907149137,
+      "sourceSha256": "c7852f65d204da7bfd566c0ad7c255c280dbf8dc628024e015fc8862daea6af2",
+      "protocol": "fresh 100BB; four independent peers; paired identical decks with swapped button/holes; avalanche-mixed deck/AI/peer RNG seeds; fresh profile per peer; same production sample budgets",
+      "samples": 100,
+      "elapsedSeconds": 145.06829516200003,
+      "illegalActions": 0,
+      "stackViolations": 0,
+      "stress": {
+        "hands": 1000,
+        "actions": 5554,
+        "matches": 33,
+        "minimumEffectiveStack": 1
+      },
+      "results": [
+        {
+          "opponent": "tight-value",
+          "hands": 2500,
+          "bbPer100": -32.940000000000005,
+          "ci95": [
+            -102.42762239692829,
+            36.54762239692828
+          ],
+          "aiBusts": 45,
+          "fullStackWins": 40,
+          "actions": 9880,
+          "actionCounts": {
+            "call": 1609,
+            "check": 1373,
+            "raise": 392,
+            "bet": 615,
+            "fold": 355
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 353,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 291,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 5,
+                "opportunities": 253
+              },
+              "foldToThreeBet": {
+                "hits": 0,
+                "opportunities": 8
+              },
+              "fourBet": {
+                "hits": 1,
+                "opportunities": 8
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 54,
+                "opportunities": 167
+              },
+              "foldToCbet": {
+                "hits": 23,
+                "opportunities": 23
+              },
+              "aggression": {
+                "hits": 814,
+                "opportunities": 1412
+              },
+              "foldBBToSteal": {
+                "hits": 186,
+                "opportunities": 253
+              },
+              "wtsd": {
+                "hits": 422,
+                "opportunities": 1204
+              },
+              "wonShowdown": {
+                "hits": 262,
+                "opportunities": 422
+              }
+            }
+          },
+          "early": {
+            "bbPer100": -116.39999999999999,
+            "ci95": [
+              -260.5751234782752,
+              27.775123478275205
+            ]
+          },
+          "late": {
+            "bbPer100": 86.4,
+            "ci95": [
+              -90.67696248021889,
+              263.4769624802189
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 0,
+            "ci95": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "opponent": "calling-station",
+          "hands": 2500,
+          "bbPer100": 9.82,
+          "ci95": [
+            -49.91140581592177,
+            69.55140581592177
+          ],
+          "aiBusts": 28,
+          "fullStackWins": 29,
+          "actions": 18483,
+          "actionCounts": {
+            "check": 4539,
+            "fold": 334,
+            "bet": 1781,
+            "call": 1398,
+            "raise": 816
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 1530,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 44,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 6,
+                "opportunities": 644
+              },
+              "foldToThreeBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "fourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 2,
+                "opportunities": 30
+              },
+              "foldToCbet": {
+                "hits": 163,
+                "opportunities": 262
+              },
+              "aggression": {
+                "hits": 874,
+                "opportunities": 2582
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 264
+              },
+              "wtsd": {
+                "hits": 1368,
+                "opportunities": 2406
+              },
+              "wonShowdown": {
+                "hits": 803.5,
+                "opportunities": 1368
+              }
+            }
+          },
+          "early": {
+            "bbPer100": -120.39999999999999,
+            "ci95": [
+              -271.8986633968106,
+              31.098663396810636
+            ]
+          },
+          "late": {
+            "bbPer100": 56.2,
+            "ci95": [
+              -86.13027478391335,
+              198.53027478391334
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 0,
+            "ci95": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "opponent": "pressure",
+          "hands": 2500,
+          "bbPer100": 399.04,
+          "ci95": [
+            265.6601234108823,
+            532.4198765891177
+          ],
+          "aiBusts": 164,
+          "fullStackWins": 276,
+          "actions": 16411,
+          "actionCounts": {
+            "call": 5241,
+            "check": 1201,
+            "bet": 693,
+            "raise": 955,
+            "fold": 1234
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2421,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 2421,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 270,
+                "opportunities": 270
+              },
+              "foldToThreeBet": {
+                "hits": 43,
+                "opportunities": 98
+              },
+              "fourBet": {
+                "hits": 38,
+                "opportunities": 98
+              },
+              "foldToFourBet": {
+                "hits": 15,
+                "opportunities": 40
+              },
+              "cbet": {
+                "hits": 1578,
+                "opportunities": 1578
+              },
+              "foldToCbet": {
+                "hits": 2,
+                "opportunities": 4
+              },
+              "aggression": {
+                "hits": 3698,
+                "opportunities": 4501
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 270
+              },
+              "wtsd": {
+                "hits": 763,
+                "opportunities": 1937
+              },
+              "wonShowdown": {
+                "hits": 335,
+                "opportunities": 763
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 665.2,
+            "ci95": [
+              372.1319139051589,
+              958.2680860948412
+            ]
+          },
+          "late": {
+            "bbPer100": 392.2,
+            "ci95": [
+              77.09905182881852,
+              707.3009481711815
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 0,
+            "ci95": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "opponent": "balanced",
+          "hands": 2500,
+          "bbPer100": -119.6,
+          "ci95": [
+            -180.00404848430136,
+            -59.19595151569862
+          ],
+          "aiBusts": 33,
+          "fullStackWins": 19,
+          "actions": 11432,
+          "actionCounts": {
+            "call": 2181,
+            "bet": 720,
+            "check": 1394,
+            "raise": 540,
+            "fold": 498
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 665,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 561,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 2,
+                "opportunities": 259
+              },
+              "foldToThreeBet": {
+                "hits": 0,
+                "opportunities": 33
+              },
+              "fourBet": {
+                "hits": 2,
+                "opportunities": 33
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 1
+              },
+              "cbet": {
+                "hits": 138,
+                "opportunities": 300
+              },
+              "foldToCbet": {
+                "hits": 33,
+                "opportunities": 37
+              },
+              "aggression": {
+                "hits": 1405,
+                "opportunities": 2216
+              },
+              "foldBBToSteal": {
+                "hits": 153,
+                "opportunities": 259
+              },
+              "wtsd": {
+                "hits": 458,
+                "opportunities": 1467
+              },
+              "wonShowdown": {
+                "hits": 278,
+                "opportunities": 458
+              }
+            }
+          },
+          "early": {
+            "bbPer100": -126.69999999999999,
+            "ci95": [
+              -260.98265647664886,
+              7.582656476648879
+            ]
+          },
+          "late": {
+            "bbPer100": -239.4,
+            "ci95": [
+              -372.9307626338376,
+              -105.86923736616237
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 0,
+            "ci95": [
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "level": "Beginner",
+      "pilot": false,
+      "hands": 10000,
+      "seed": 3907149137,
+      "sourceSha256": "c7852f65d204da7bfd566c0ad7c255c280dbf8dc628024e015fc8862daea6af2",
+      "protocol": "fresh 100BB; four independent peers; paired identical decks with swapped button/holes; avalanche-mixed deck/AI/peer RNG seeds; fresh profile per peer; same production sample budgets",
+      "elapsedSeconds": 52.886856976,
+      "illegalActions": 0,
+      "stackViolations": 0,
+      "stress": {
+        "hands": 1000,
+        "actions": 3882,
+        "matches": 14,
+        "minimumEffectiveStack": 1
+      },
+      "results": [
+        {
+          "opponent": "tight-value",
+          "hands": 2500,
+          "bbPer100": 10.12,
+          "ci95": [
+            -30.94403597788976,
+            51.18403597788976
+          ],
+          "aiBusts": 10,
+          "fullStackWins": 17,
+          "actions": 6817,
+          "actionCounts": {
+            "raise": 812,
+            "call": 630,
+            "check": 972,
+            "fold": 519,
+            "bet": 122,
+            "allin": 12
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 465,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 289,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 12,
+                "opportunities": 773
+              },
+              "foldToThreeBet": {
+                "hits": 14,
+                "opportunities": 16
+              },
+              "fourBet": {
+                "hits": 2,
+                "opportunities": 16
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 40,
+                "opportunities": 128
+              },
+              "foldToCbet": {
+                "hits": 15,
+                "opportunities": 16
+              },
+              "aggression": {
+                "hits": 431,
+                "opportunities": 543
+              },
+              "foldBBToSteal": {
+                "hits": 585,
+                "opportunities": 773
+              },
+              "wtsd": {
+                "hits": 308,
+                "opportunities": 548
+              },
+              "wonShowdown": {
+                "hits": 161.5,
+                "opportunities": 308
+              }
+            }
+          },
+          "early": {
+            "bbPer100": -34,
+            "ci95": [
+              -105.05732146185456,
+              37.057321461854556
+            ]
+          },
+          "late": {
+            "bbPer100": 85.39999999999999,
+            "ci95": [
+              -6.993074127680444,
+              177.79307412768043
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 43.059999999999995,
+            "ci95": [
+              -21.35103476214821,
+              107.47103476214821
+            ]
+          }
+        },
+        {
+          "opponent": "calling-station",
+          "hands": 2500,
+          "bbPer100": 151.7,
+          "ci95": [
+            104.6104111859049,
+            198.78958881409508
+          ],
+          "aiBusts": 4,
+          "fullStackWins": 27,
+          "actions": 18151,
+          "actionCounts": {
+            "raise": 1189,
+            "check": 5946,
+            "fold": 561,
+            "bet": 698,
+            "call": 668,
+            "allin": 16
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2026,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 41,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 16,
+                "opportunities": 1137
+              },
+              "foldToThreeBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "fourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 1,
+                "opportunities": 15
+              },
+              "foldToCbet": {
+                "hits": 106,
+                "opportunities": 153
+              },
+              "aggression": {
+                "hits": 776,
+                "opportunities": 1432
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 773
+              },
+              "wtsd": {
+                "hits": 1647,
+                "opportunities": 2226
+              },
+              "wonShowdown": {
+                "hits": 789,
+                "opportunities": 1647
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 108,
+            "ci95": [
+              -8.47893902049995,
+              224.47893902049995
+            ]
+          },
+          "late": {
+            "bbPer100": 216.7,
+            "ci95": [
+              101.04468430331602,
+              332.355315696684
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 141.88,
+            "ci95": [
+              83.63140464203371,
+              200.12859535796628
+            ]
+          }
+        },
+        {
+          "opponent": "pressure",
+          "hands": 2500,
+          "bbPer100": 406.03999999999996,
+          "ci95": [
+            291.9222155328375,
+            520.1577844671624
+          ],
+          "aiBusts": 21,
+          "fullStackWins": 100,
+          "actions": 12013,
+          "actionCounts": {
+            "fold": 1884,
+            "raise": 931,
+            "call": 2871,
+            "check": 1282,
+            "bet": 258,
+            "allin": 47
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2267,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 2267,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 787,
+                "opportunities": 787
+              },
+              "foldToThreeBet": {
+                "hits": 27,
+                "opportunities": 67
+              },
+              "fourBet": {
+                "hits": 31,
+                "opportunities": 67
+              },
+              "foldToFourBet": {
+                "hits": 15,
+                "opportunities": 40
+              },
+              "cbet": {
+                "hits": 943,
+                "opportunities": 943
+              },
+              "foldToCbet": {
+                "hits": 1,
+                "opportunities": 3
+              },
+              "aggression": {
+                "hits": 2148,
+                "opportunities": 2349
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 787
+              },
+              "wtsd": {
+                "hits": 448,
+                "opportunities": 1062
+              },
+              "wonShowdown": {
+                "hits": 137,
+                "opportunities": 448
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 477.7,
+            "ci95": [
+              220.17648315180315,
+              735.2235168481968
+            ]
+          },
+          "late": {
+            "bbPer100": 128.5,
+            "ci95": [
+              -116.6391362350293,
+              373.6391362350293
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 7.000000000000001,
+            "ci95": [
+              -148.82132991360632,
+              162.82132991360632
+            ]
+          }
+        },
+        {
+          "opponent": "balanced",
+          "hands": 2500,
+          "bbPer100": -3.56,
+          "ci95": [
+            -38.424548782510136,
+            31.304548782510135
+          ],
+          "aiBusts": 4,
+          "fullStackWins": 8,
+          "actions": 8914,
+          "actionCounts": {
+            "raise": 827,
+            "check": 1343,
+            "call": 1254,
+            "bet": 168,
+            "fold": 741,
+            "allin": 8
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 887,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 557,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 15,
+                "opportunities": 764
+              },
+              "foldToThreeBet": {
+                "hits": 32,
+                "opportunities": 34
+              },
+              "fourBet": {
+                "hits": 2,
+                "opportunities": 34
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 134,
+                "opportunities": 284
+              },
+              "foldToCbet": {
+                "hits": 27,
+                "opportunities": 29
+              },
+              "aggression": {
+                "hits": 1018,
+                "opportunities": 1192
+              },
+              "foldBBToSteal": {
+                "hits": 419,
+                "opportunities": 764
+              },
+              "wtsd": {
+                "hits": 446,
+                "opportunities": 869
+              },
+              "wonShowdown": {
+                "hits": 225,
+                "opportunities": 446
+              }
+            }
+          },
+          "early": {
+            "bbPer100": -36.3,
+            "ci95": [
+              -123.30238352678248,
+              50.702383526782484
+            ]
+          },
+          "late": {
+            "bbPer100": -11.3,
+            "ci95": [
+              -72.6847058544336,
+              50.084705854433594
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 116.04,
+            "ci95": [
+              60.456419484683686,
+              171.62358051531632
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "level": "Regular",
+      "pilot": false,
+      "hands": 10000,
+      "seed": 3907149137,
+      "sourceSha256": "c7852f65d204da7bfd566c0ad7c255c280dbf8dc628024e015fc8862daea6af2",
+      "protocol": "fresh 100BB; four independent peers; paired identical decks with swapped button/holes; avalanche-mixed deck/AI/peer RNG seeds; fresh profile per peer; same production sample budgets",
+      "elapsedSeconds": 65.67201480799999,
+      "illegalActions": 0,
+      "stackViolations": 0,
+      "stress": {
+        "hands": 1000,
+        "actions": 3370,
+        "matches": 15,
+        "minimumEffectiveStack": 2
+      },
+      "results": [
+        {
+          "opponent": "tight-value",
+          "hands": 2500,
+          "bbPer100": 55.7,
+          "ci95": [
+            24.708437853631498,
+            86.69156214636851
+          ],
+          "aiBusts": 5,
+          "fullStackWins": 12,
+          "actions": 5922,
+          "actionCounts": {
+            "raise": 972,
+            "call": 312,
+            "check": 680,
+            "fold": 544,
+            "bet": 101,
+            "allin": 6
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 495,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 289,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 15,
+                "opportunities": 934
+              },
+              "foldToThreeBet": {
+                "hits": 20,
+                "opportunities": 23
+              },
+              "fourBet": {
+                "hits": 3,
+                "opportunities": 23
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 38,
+                "opportunities": 122
+              },
+              "foldToCbet": {
+                "hits": 19,
+                "opportunities": 20
+              },
+              "aggression": {
+                "hits": 292,
+                "opportunities": 385
+              },
+              "foldBBToSteal": {
+                "hits": 713,
+                "opportunities": 934
+              },
+              "wtsd": {
+                "hits": 163,
+                "opportunities": 412
+              },
+              "wonShowdown": {
+                "hits": 81,
+                "opportunities": 163
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 84,
+            "ci95": [
+              13.122574770037545,
+              154.87742522996245
+            ]
+          },
+          "late": {
+            "bbPer100": 85.7,
+            "ci95": [
+              7.396188544760918,
+              164.0038114552391
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 88.64,
+            "ci95": [
+              19.8671076927957,
+              157.4128923072043
+            ]
+          }
+        },
+        {
+          "opponent": "calling-station",
+          "hands": 2500,
+          "bbPer100": 178.34,
+          "ci95": [
+            134.53425480639322,
+            222.14574519360679
+          ],
+          "aiBusts": 5,
+          "fullStackWins": 23,
+          "actions": 17934,
+          "actionCounts": {
+            "raise": 1349,
+            "check": 5826,
+            "fold": 712,
+            "bet": 734,
+            "call": 307,
+            "allin": 14
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2194,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 41,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 18,
+                "opportunities": 1307
+              },
+              "foldToThreeBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "fourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 1,
+                "opportunities": 15
+              },
+              "foldToCbet": {
+                "hits": 116,
+                "opportunities": 175
+              },
+              "aggression": {
+                "hits": 724,
+                "opportunities": 1416
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 943
+              },
+              "wtsd": {
+                "hits": 1465,
+                "opportunities": 2226
+              },
+              "wonShowdown": {
+                "hits": 663.5,
+                "opportunities": 1465
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 162.20000000000002,
+            "ci95": [
+              55.18311193860404,
+              269.216888061396
+            ]
+          },
+          "late": {
+            "bbPer100": 235.5,
+            "ci95": [
+              132.65616526123154,
+              338.34383473876846
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 168.52,
+            "ci95": [
+              109.13876942855728,
+              227.90123057144274
+            ]
+          }
+        },
+        {
+          "opponent": "pressure",
+          "hands": 2500,
+          "bbPer100": 0.06,
+          "ci95": [
+            -80.067768609253,
+            80.187768609253
+          ],
+          "aiBusts": 12,
+          "fullStackWins": 51,
+          "actions": 10103,
+          "actionCounts": {
+            "fold": 2222,
+            "raise": 1142,
+            "call": 1629,
+            "check": 909,
+            "bet": 176,
+            "allin": 28
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2267,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 2267,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 962,
+                "opportunities": 962
+              },
+              "foldToThreeBet": {
+                "hits": 48,
+                "opportunities": 114
+              },
+              "fourBet": {
+                "hits": 51,
+                "opportunities": 114
+              },
+              "foldToFourBet": {
+                "hits": 15,
+                "opportunities": 40
+              },
+              "cbet": {
+                "hits": 868,
+                "opportunities": 868
+              },
+              "foldToCbet": {
+                "hits": 0,
+                "opportunities": 3
+              },
+              "aggression": {
+                "hits": 1430,
+                "opportunities": 1560
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 962
+              },
+              "wtsd": {
+                "hits": 132,
+                "opportunities": 988
+              },
+              "wonShowdown": {
+                "hits": 21.5,
+                "opportunities": 132
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 189.9,
+            "ci95": [
+              -20.92697603683291,
+              400.7269760368329
+            ]
+          },
+          "late": {
+            "bbPer100": -22.6,
+            "ci95": [
+              -182.73256025227283,
+              137.53256025227284
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": -398.97999999999996,
+            "ci95": [
+              -550.1476012687182,
+              -247.81239873128177
+            ]
+          }
+        },
+        {
+          "opponent": "balanced",
+          "hands": 2500,
+          "bbPer100": 31.4,
+          "ci95": [
+            4.409972199129747,
+            58.39002780087025
+          ],
+          "aiBusts": 3,
+          "fullStackWins": 7,
+          "actions": 7822,
+          "actionCounts": {
+            "raise": 1012,
+            "check": 1054,
+            "fold": 871,
+            "call": 657,
+            "bet": 139,
+            "allin": 6
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 951,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 557,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 21,
+                "opportunities": 926
+              },
+              "foldToThreeBet": {
+                "hits": 61,
+                "opportunities": 64
+              },
+              "fourBet": {
+                "hits": 3,
+                "opportunities": 64
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 119,
+                "opportunities": 253
+              },
+              "foldToCbet": {
+                "hits": 32,
+                "opportunities": 37
+              },
+              "aggression": {
+                "hits": 733,
+                "opportunities": 880
+              },
+              "foldBBToSteal": {
+                "hits": 511,
+                "opportunities": 926
+              },
+              "wtsd": {
+                "hits": 221,
+                "opportunities": 744
+              },
+              "wonShowdown": {
+                "hits": 80.5,
+                "opportunities": 221
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 12,
+            "ci95": [
+              -32.53771262405753,
+              56.53771262405753
+            ]
+          },
+          "late": {
+            "bbPer100": 40.8,
+            "ci95": [
+              -3.5901348973939378,
+              85.19013489739393
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 151,
+            "ci95": [
+              89.9518390805969,
+              212.0481609194031
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "level": "Strong Reg",
+      "pilot": false,
+      "hands": 10000,
+      "seed": 3907149137,
+      "sourceSha256": "c7852f65d204da7bfd566c0ad7c255c280dbf8dc628024e015fc8862daea6af2",
+      "protocol": "fresh 100BB; four independent peers; paired identical decks with swapped button/holes; avalanche-mixed deck/AI/peer RNG seeds; fresh profile per peer; same production sample budgets",
+      "elapsedSeconds": 63.946784122,
+      "illegalActions": 0,
+      "stackViolations": 0,
+      "stress": {
+        "hands": 1000,
+        "actions": 3439,
+        "matches": 9,
+        "minimumEffectiveStack": 2
+      },
+      "results": [
+        {
+          "opponent": "tight-value",
+          "hands": 2500,
+          "bbPer100": 44.76,
+          "ci95": [
+            11.815154317059807,
+            77.70484568294019
+          ],
+          "aiBusts": 7,
+          "fullStackWins": 10,
+          "actions": 5781,
+          "actionCounts": {
+            "raise": 1093,
+            "call": 268,
+            "check": 520,
+            "fold": 444,
+            "bet": 169,
+            "allin": 7
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 524,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 291,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 18,
+                "opportunities": 1048
+              },
+              "foldToThreeBet": {
+                "hits": 27,
+                "opportunities": 31
+              },
+              "fourBet": {
+                "hits": 4,
+                "opportunities": 31
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 37,
+                "opportunities": 138
+              },
+              "foldToCbet": {
+                "hits": 66,
+                "opportunities": 67
+              },
+              "aggression": {
+                "hits": 267,
+                "opportunities": 423
+              },
+              "foldBBToSteal": {
+                "hits": 797,
+                "opportunities": 1048
+              },
+              "wtsd": {
+                "hits": 107,
+                "opportunities": 406
+              },
+              "wonShowdown": {
+                "hits": 56,
+                "opportunities": 107
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 41.6,
+            "ci95": [
+              -31.172028274693794,
+              114.3720282746938
+            ]
+          },
+          "late": {
+            "bbPer100": 54.1,
+            "ci95": [
+              -25.906126138532507,
+              134.10612613853252
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 77.7,
+            "ci95": [
+              7.980234402856098,
+              147.4197655971439
+            ]
+          }
+        },
+        {
+          "opponent": "calling-station",
+          "hands": 2500,
+          "bbPer100": 208.02,
+          "ci95": [
+            161.35230210453292,
+            254.6876978954671
+          ],
+          "aiBusts": 3,
+          "fullStackWins": 27,
+          "actions": 17284,
+          "actionCounts": {
+            "raise": 1648,
+            "bet": 1425,
+            "check": 4335,
+            "fold": 643,
+            "call": 233,
+            "allin": 12
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2297,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 42,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 20,
+                "opportunities": 1604
+              },
+              "foldToThreeBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "fourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 1,
+                "opportunities": 15
+              },
+              "foldToCbet": {
+                "hits": 443,
+                "opportunities": 671
+              },
+              "aggression": {
+                "hits": 682,
+                "opportunities": 2033
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 1047
+              },
+              "wtsd": {
+                "hits": 1141,
+                "opportunities": 2272
+              },
+              "wonShowdown": {
+                "hits": 521.5,
+                "opportunities": 1141
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 212.2,
+            "ci95": [
+              89.01708992574717,
+              335.3829100742528
+            ]
+          },
+          "late": {
+            "bbPer100": 251.5,
+            "ci95": [
+              139.94658195325593,
+              363.05341804674407
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 198.2,
+            "ci95": [
+              137.93688476772218,
+              258.4631152322778
+            ]
+          }
+        },
+        {
+          "opponent": "pressure",
+          "hands": 2500,
+          "bbPer100": 78.9,
+          "ci95": [
+            -4.887370354702057,
+            162.68737035470207
+          ],
+          "aiBusts": 8,
+          "fullStackWins": 68,
+          "actions": 10630,
+          "actionCounts": {
+            "call": 1705,
+            "check": 944,
+            "fold": 2137,
+            "raise": 1287,
+            "bet": 299,
+            "allin": 23
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2306,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 2306,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 1056,
+                "opportunities": 1056
+              },
+              "foldToThreeBet": {
+                "hits": 69,
+                "opportunities": 160
+              },
+              "fourBet": {
+                "hits": 68,
+                "opportunities": 160
+              },
+              "foldToFourBet": {
+                "hits": 15,
+                "opportunities": 40
+              },
+              "cbet": {
+                "hits": 892,
+                "opportunities": 892
+              },
+              "foldToCbet": {
+                "hits": 3,
+                "opportunities": 12
+              },
+              "aggression": {
+                "hits": 1505,
+                "opportunities": 1713
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 1056
+              },
+              "wtsd": {
+                "hits": 151,
+                "opportunities": 1106
+              },
+              "wonShowdown": {
+                "hits": 19.5,
+                "opportunities": 151
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 242.70000000000002,
+            "ci95": [
+              37.60517349288406,
+              447.794826507116
+            ]
+          },
+          "late": {
+            "bbPer100": -10.8,
+            "ci95": [
+              -186.0878548197029,
+              164.48785481970287
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": -320.14,
+            "ci95": [
+              -469.2786422251439,
+              -171.00135777485602
+            ]
+          }
+        },
+        {
+          "opponent": "balanced",
+          "hands": 2500,
+          "bbPer100": 46.9,
+          "ci95": [
+            20.133294491136372,
+            73.66670550886363
+          ],
+          "aiBusts": 2,
+          "fullStackWins": 7,
+          "actions": 7709,
+          "actionCounts": {
+            "raise": 1157,
+            "check": 847,
+            "fold": 716,
+            "call": 613,
+            "bet": 269,
+            "allin": 5
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 999,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 558,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 25,
+                "opportunities": 1053
+              },
+              "foldToThreeBet": {
+                "hits": 85,
+                "opportunities": 88
+              },
+              "fourBet": {
+                "hits": 3,
+                "opportunities": 88
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 120,
+                "opportunities": 262
+              },
+              "foldToCbet": {
+                "hits": 105,
+                "opportunities": 124
+              },
+              "aggression": {
+                "hits": 678,
+                "opportunities": 951
+              },
+              "foldBBToSteal": {
+                "hits": 587,
+                "opportunities": 1053
+              },
+              "wtsd": {
+                "hits": 180,
+                "opportunities": 759
+              },
+              "wonShowdown": {
+                "hits": 63,
+                "opportunities": 180
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 33.6,
+            "ci95": [
+              -12.38638297073308,
+              79.58638297073308
+            ]
+          },
+          "late": {
+            "bbPer100": 27.3,
+            "ci95": [
+              -9.771460891019348,
+              64.37146089101935
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 166.5,
+            "ci95": [
+              107.39022763983296,
+              225.60977236016703
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "level": "Expert",
+      "pilot": false,
+      "hands": 10000,
+      "seed": 3907149137,
+      "sourceSha256": "c7852f65d204da7bfd566c0ad7c255c280dbf8dc628024e015fc8862daea6af2",
+      "protocol": "fresh 100BB; four independent peers; paired identical decks with swapped button/holes; avalanche-mixed deck/AI/peer RNG seeds; fresh profile per peer; same production sample budgets",
+      "elapsedSeconds": 65.099487383,
+      "illegalActions": 0,
+      "stackViolations": 0,
+      "stress": {
+        "hands": 1000,
+        "actions": 3312,
+        "matches": 12,
+        "minimumEffectiveStack": 22
+      },
+      "results": [
+        {
+          "opponent": "tight-value",
+          "hands": 2500,
+          "bbPer100": 53.42,
+          "ci95": [
+            21.58875251673489,
+            85.25124748326512
+          ],
+          "aiBusts": 7,
+          "fullStackWins": 9,
+          "actions": 5797,
+          "actionCounts": {
+            "raise": 1127,
+            "call": 262,
+            "check": 491,
+            "fold": 401,
+            "bet": 192,
+            "allin": 6
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 532,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 291,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 18,
+                "opportunities": 1081
+              },
+              "foldToThreeBet": {
+                "hits": 29,
+                "opportunities": 33
+              },
+              "fourBet": {
+                "hits": 4,
+                "opportunities": 33
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 36,
+                "opportunities": 135
+              },
+              "foldToCbet": {
+                "hits": 79,
+                "opportunities": 83
+              },
+              "aggression": {
+                "hits": 251,
+                "opportunities": 428
+              },
+              "foldBBToSteal": {
+                "hits": 822,
+                "opportunities": 1081
+              },
+              "wtsd": {
+                "hits": 106,
+                "opportunities": 412
+              },
+              "wonShowdown": {
+                "hits": 54.5,
+                "opportunities": 106
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 58.099999999999994,
+            "ci95": [
+              -11.396760798919061,
+              127.59676079891905
+            ]
+          },
+          "late": {
+            "bbPer100": 79.9,
+            "ci95": [
+              -14.10391838334013,
+              173.90391838334014
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 86.36,
+            "ci95": [
+              16.18997072786894,
+              156.53002927213106
+            ]
+          }
+        },
+        {
+          "opponent": "calling-station",
+          "hands": 2500,
+          "bbPer100": 176.58,
+          "ci95": [
+            132.31971274871972,
+            220.8402872512803
+          ],
+          "aiBusts": 3,
+          "fullStackWins": 22,
+          "actions": 17531,
+          "actionCounts": {
+            "raise": 1683,
+            "check": 4447,
+            "fold": 601,
+            "bet": 1414,
+            "call": 245,
+            "allin": 14
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2335,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 43,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 21,
+                "opportunities": 1642
+              },
+              "foldToThreeBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "fourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 1,
+                "opportunities": 15
+              },
+              "foldToCbet": {
+                "hits": 441,
+                "opportunities": 677
+              },
+              "aggression": {
+                "hits": 687,
+                "opportunities": 2018
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 1085
+              },
+              "wtsd": {
+                "hits": 1202,
+                "opportunities": 2309
+              },
+              "wonShowdown": {
+                "hits": 561.5,
+                "opportunities": 1202
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 151.1,
+            "ci95": [
+              36.591741556939766,
+              265.6082584430602
+            ]
+          },
+          "late": {
+            "bbPer100": 241.2,
+            "ci95": [
+              132.3242858369136,
+              350.0757141630864
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 166.76,
+            "ci95": [
+              106.19078429386028,
+              227.3292157061397
+            ]
+          }
+        },
+        {
+          "opponent": "pressure",
+          "hands": 2500,
+          "bbPer100": 90.60000000000001,
+          "ci95": [
+            6.711532891163799,
+            174.48846710883623
+          ],
+          "aiBusts": 10,
+          "fullStackWins": 77,
+          "actions": 10729,
+          "actionCounts": {
+            "call": 1695,
+            "check": 930,
+            "fold": 2122,
+            "raise": 1338,
+            "bet": 316,
+            "allin": 32
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2346,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 2346,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 1096,
+                "opportunities": 1096
+              },
+              "foldToThreeBet": {
+                "hits": 70,
+                "opportunities": 164
+              },
+              "fourBet": {
+                "hits": 71,
+                "opportunities": 164
+              },
+              "foldToFourBet": {
+                "hits": 15,
+                "opportunities": 40
+              },
+              "cbet": {
+                "hits": 880,
+                "opportunities": 880
+              },
+              "foldToCbet": {
+                "hits": 1,
+                "opportunities": 8
+              },
+              "aggression": {
+                "hits": 1495,
+                "opportunities": 1731
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 1096
+              },
+              "wtsd": {
+                "hits": 156,
+                "opportunities": 1108
+              },
+              "wonShowdown": {
+                "hits": 25,
+                "opportunities": 156
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 303.3,
+            "ci95": [
+              88.52265096491624,
+              518.0773490350838
+            ]
+          },
+          "late": {
+            "bbPer100": -73.1,
+            "ci95": [
+              -230.94387029229668,
+              84.74387029229669
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": -308.44,
+            "ci95": [
+              -456.9526559077493,
+              -159.92734409225065
+            ]
+          }
+        },
+        {
+          "opponent": "balanced",
+          "hands": 2500,
+          "bbPer100": 61.6,
+          "ci95": [
+            33.152027448743894,
+            90.04797255125611
+          ],
+          "aiBusts": 2,
+          "fullStackWins": 10,
+          "actions": 7819,
+          "actionCounts": {
+            "raise": 1199,
+            "check": 851,
+            "fold": 678,
+            "call": 629,
+            "bet": 279,
+            "allin": 6
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 1011,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 560,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 27,
+                "opportunities": 1087
+              },
+              "foldToThreeBet": {
+                "hits": 88,
+                "opportunities": 91
+              },
+              "fourBet": {
+                "hits": 3,
+                "opportunities": 91
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 122,
+                "opportunities": 262
+              },
+              "foldToCbet": {
+                "hits": 111,
+                "opportunities": 127
+              },
+              "aggression": {
+                "hits": 696,
+                "opportunities": 981
+              },
+              "foldBBToSteal": {
+                "hits": 609,
+                "opportunities": 1087
+              },
+              "wtsd": {
+                "hits": 185,
+                "opportunities": 766
+              },
+              "wonShowdown": {
+                "hits": 61.5,
+                "opportunities": 185
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 61.4,
+            "ci95": [
+              9.330980248062012,
+              113.46901975193799
+            ]
+          },
+          "late": {
+            "bbPer100": 42.199999999999996,
+            "ci95": [
+              -1.8015682933357766,
+              86.20156829333577
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 181.20000000000002,
+            "ci95": [
+              120.94579675338905,
+              241.45420324661097
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "level": "Nemesis",
+      "pilot": false,
+      "hands": 10000,
+      "seed": 3907149137,
+      "sourceSha256": "c7852f65d204da7bfd566c0ad7c255c280dbf8dc628024e015fc8862daea6af2",
+      "protocol": "fresh 100BB; four independent peers; paired identical decks with swapped button/holes; avalanche-mixed deck/AI/peer RNG seeds; fresh profile per peer; same production sample budgets",
+      "elapsedSeconds": 61.831004946,
+      "illegalActions": 0,
+      "stackViolations": 0,
+      "stress": {
+        "hands": 1000,
+        "actions": 3368,
+        "matches": 10,
+        "minimumEffectiveStack": 1
+      },
+      "results": [
+        {
+          "opponent": "tight-value",
+          "hands": 2500,
+          "bbPer100": 71.92,
+          "ci95": [
+            38.799731899577566,
+            105.04026810042244
+          ],
+          "aiBusts": 5,
+          "fullStackWins": 11,
+          "actions": 6006,
+          "actionCounts": {
+            "raise": 1256,
+            "call": 265,
+            "check": 508,
+            "fold": 288,
+            "bet": 189,
+            "allin": 9
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 568,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 293,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 20,
+                "opportunities": 1210
+              },
+              "foldToThreeBet": {
+                "hits": 28,
+                "opportunities": 32
+              },
+              "fourBet": {
+                "hits": 4,
+                "opportunities": 32
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 37,
+                "opportunities": 125
+              },
+              "foldToCbet": {
+                "hits": 92,
+                "opportunities": 95
+              },
+              "aggression": {
+                "hits": 271,
+                "opportunities": 452
+              },
+              "foldBBToSteal": {
+                "hits": 915,
+                "opportunities": 1210
+              },
+              "wtsd": {
+                "hits": 125,
+                "opportunities": 432
+              },
+              "wonShowdown": {
+                "hits": 60,
+                "opportunities": 125
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 61.8,
+            "ci95": [
+              -8.263195788376052,
+              131.86319578837606
+            ]
+          },
+          "late": {
+            "bbPer100": 93.10000000000001,
+            "ci95": [
+              0.9281892088798003,
+              185.27181079112023
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 104.86,
+            "ci95": [
+              36.95942088500985,
+              172.76057911499015
+            ]
+          }
+        },
+        {
+          "opponent": "calling-station",
+          "hands": 2500,
+          "bbPer100": 158.06,
+          "ci95": [
+            115.477917217606,
+            200.642082782394
+          ],
+          "aiBusts": 2,
+          "fullStackWins": 18,
+          "actions": 16383,
+          "actionCounts": {
+            "raise": 1520,
+            "check": 4049,
+            "fold": 725,
+            "bet": 1406,
+            "call": 219,
+            "allin": 10
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2174,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 39,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 17,
+                "opportunities": 1481
+              },
+              "foldToThreeBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "fourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 0,
+                "opportunities": 13
+              },
+              "foldToCbet": {
+                "hits": 442,
+                "opportunities": 693
+              },
+              "aggression": {
+                "hits": 623,
+                "opportunities": 1948
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 924
+              },
+              "wtsd": {
+                "hits": 1078,
+                "opportunities": 2150
+              },
+              "wonShowdown": {
+                "hits": 507,
+                "opportunities": 1078
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 144.6,
+            "ci95": [
+              37.520081286251596,
+              251.6799187137484
+            ]
+          },
+          "late": {
+            "bbPer100": 231.3,
+            "ci95": [
+              121.70431305030337,
+              340.89568694969665
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 148.23999999999998,
+            "ci95": [
+              86.81223310061755,
+              209.6677668993824
+            ]
+          }
+        },
+        {
+          "opponent": "pressure",
+          "hands": 2500,
+          "bbPer100": 347.78,
+          "ci95": [
+            247.8005158760891,
+            447.75948412391085
+          ],
+          "aiBusts": 26,
+          "fullStackWins": 109,
+          "actions": 11969,
+          "actionCounts": {
+            "call": 2414,
+            "check": 1235,
+            "fold": 1885,
+            "raise": 1247,
+            "bet": 364,
+            "allin": 45
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 2177,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 2177,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 927,
+                "opportunities": 927
+              },
+              "foldToThreeBet": {
+                "hits": 84,
+                "opportunities": 205
+              },
+              "fourBet": {
+                "hits": 88,
+                "opportunities": 205
+              },
+              "foldToFourBet": {
+                "hits": 32,
+                "opportunities": 74
+              },
+              "cbet": {
+                "hits": 1008,
+                "opportunities": 1008
+              },
+              "foldToCbet": {
+                "hits": 5,
+                "opportunities": 14
+              },
+              "aggression": {
+                "hits": 2035,
+                "opportunities": 2308
+              },
+              "foldBBToSteal": {
+                "hits": 0,
+                "opportunities": 927
+              },
+              "wtsd": {
+                "hits": 348,
+                "opportunities": 1257
+              },
+              "wonShowdown": {
+                "hits": 74.5,
+                "opportunities": 348
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 352.2,
+            "ci95": [
+              117.27959869260874,
+              587.1204013073913
+            ]
+          },
+          "late": {
+            "bbPer100": 162.5,
+            "ci95": [
+              -32.01973656070635,
+              357.01973656070635
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": -51.25999999999999,
+            "ci95": [
+              -205.0392637397701,
+              102.51926373977011
+            ]
+          }
+        },
+        {
+          "opponent": "balanced",
+          "hands": 2500,
+          "bbPer100": 60.12,
+          "ci95": [
+            27.815144948155123,
+            92.42485505184487
+          ],
+          "aiBusts": 2,
+          "fullStackWins": 10,
+          "actions": 8182,
+          "actionCounts": {
+            "raise": 1324,
+            "check": 870,
+            "fold": 534,
+            "call": 714,
+            "bet": 304,
+            "allin": 6
+          },
+          "eligibleAdaptationHands": 2471,
+          "finalProfile": {
+            "id": "hero",
+            "version": 1,
+            "hands": 2500,
+            "metrics": {
+              "vpip": {
+                "hits": 1064,
+                "opportunities": 2500
+              },
+              "pfr": {
+                "hits": 560,
+                "opportunities": 2500
+              },
+              "threeBet": {
+                "hits": 27,
+                "opportunities": 1210
+              },
+              "foldToThreeBet": {
+                "hits": 86,
+                "opportunities": 89
+              },
+              "fourBet": {
+                "hits": 3,
+                "opportunities": 89
+              },
+              "foldToFourBet": {
+                "hits": 0,
+                "opportunities": 0
+              },
+              "cbet": {
+                "hits": 110,
+                "opportunities": 241
+              },
+              "foldToCbet": {
+                "hits": 126,
+                "opportunities": 141
+              },
+              "aggression": {
+                "hits": 762,
+                "opportunities": 1070
+              },
+              "foldBBToSteal": {
+                "hits": 679,
+                "opportunities": 1210
+              },
+              "wtsd": {
+                "hits": 241,
+                "opportunities": 797
+              },
+              "wonShowdown": {
+                "hits": 100.5,
+                "opportunities": 241
+              }
+            }
+          },
+          "early": {
+            "bbPer100": 41.699999999999996,
+            "ci95": [
+              -16.690385554514037,
+              100.09038555451403
+            ]
+          },
+          "late": {
+            "bbPer100": 56.599999999999994,
+            "ci95": [
+              -5.809963031219937,
+              119.00996303121993
+            ]
+          },
+          "improvementVsLegacy": {
+            "bbPer100": 179.72,
+            "ci95": [
+              121.0576351383632,
+              238.3823648616368
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

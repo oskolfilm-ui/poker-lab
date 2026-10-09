@@ -205,7 +205,7 @@ describe('AdaptiveAI baseline', () => {
   it('receives neither Hero cards nor the real deck', () => {
     const game = startHand({ dealer: 1 })
     const view = decisionView(game, 1)
-    expect(Object.keys(view).sort()).toEqual(['board', 'hole', 'legal', 'opponentStack', 'pot', 'street', 'streetBet'].sort())
+    expect(Object.keys(view).sort()).toEqual(['board', 'hole', 'legal', 'opponentStack', 'pot', 'street', 'streetBet', 'stack', 'effectiveStack', 'button', 'inPosition', 'actions'].sort())
     expect(view.hole).toEqual(game.players[1].hole)
     expect(view).not.toHaveProperty('deck')
     expect(view).not.toHaveProperty('players')

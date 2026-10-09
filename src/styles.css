@@ -564,3 +564,71 @@ to{opacity:1;translate:0 0}
 }
 
 .primary-button.raise-button { font-size: 20px; }
+
+.ai-settings { display: grid; grid-template-columns: minmax(250px, .8fr) minmax(0, 1.2fr); align-items: start; gap: 28px; margin: 24px 0; padding: 24px; background: var(--surface, #fff); border: 1px solid #e3e6e2; border-radius: 16px; }
+.difficulty-control label { display: block; font-weight: 800; font-size: 18px; margin-bottom: 10px; }
+.difficulty-control select { width: 100%; font: inherit; font-size: 20px; font-weight: 700; padding: 12px 14px; background: #f3f6f2; color: #1c3024; border: 1px solid #ccd7cd; border-radius: 10px; }
+.ai-settings p { font-size: 15px; line-height: 1.6; margin: 10px 0 0; color: #647069; }
+.hero-model summary { cursor: pointer; padding: 12px 0; font-size: 18px; font-weight: 700; }
+.model-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.model-grid > div { display: flex; flex-direction: column; background: #f3f6f2; border-radius: 10px; padding: 12px; gap: 5px; }
+.model-grid strong { font-size: 14px; }
+.model-grid span { font-size: 22px; font-weight: 800; }
+.model-grid small { font-size: 12px; color: #68746d; }
+@media (max-width: 700px) { .ai-settings { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 16px; } .model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* One existing score, directly over the game and visible while playing. */
+.play-surface { position: relative; }
+.match-scoreboard { position: sticky; top: 8px; z-index: 10; box-shadow: 0 5px 20px #18372c26; padding: 18px 24px; }
+.match-score > strong { font-size: 48px; }
+.score-main { min-width: 0; }
+.match-score { flex-wrap: wrap; white-space: normal; }
+.match-score > strong { max-width: 100%; overflow-wrap: anywhere; }
+.match-score > span { font-size: 24px; }
+.score-label { margin-bottom: 4px; }
+.match-status { min-width: 0; }
+.score-controls { margin-left: auto; }
+.results-panel { margin: 28px 0; padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: white; }
+.results-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.results-heading h2 { display: flex; align-items: center; gap: 10px; font-size: 25px; }
+.results-heading p { color: #647365; font-size: 16px; margin-top: 8px; }
+.chart-scope { display: flex; background: #edf2e9; border-radius: 10px; padding: 4px; gap: 4px; }
+.chart-scope button { padding: 12px; border-radius: 8px; background: transparent; font-size: 16px; }
+.chart-scope button[aria-pressed="true"] { background: #17654f; color: white; }
+.chart-summary { display: flex; gap: 38px; flex-wrap: wrap; margin: 24px 0 10px; }
+.chart-summary span { display: block; font-size: 15px; color: #647365; margin-bottom: 6px; }
+.chart-summary strong { font-size: 32px; }
+.chart-summary small { font-size: 17px; font-weight: 500; }
+.results-plot { display: block; width: 100%; height: auto; max-height: 320px; overflow: visible; }
+.results-plot text { font-size: 16px; fill: #647365; }
+.chart-grid { stroke: #e6e9e2; }
+.chart-zero { stroke: #87998b; stroke-dasharray: 6 4; }
+.chart-line { stroke: #17654f; stroke-width: 3; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.chart-point { fill: #17654f; stroke: white; stroke-width: 2; }
+.chart-cursor { stroke: #87998b; stroke-dasharray: 3 4; }
+.chart-detail { font-size: 16px; margin: 12px 0; }
+.chart-slider { width: 100%; accent-color: #17654f; min-height: 32px; }
+.chart-empty { padding: 42px 0; text-align: center; color: #647365; }
+.chart-note { margin-top: 16px; color: #647365; font-size: 14px; line-height: 1.6; }
+@media (max-width: 700px) {
+  .match-scoreboard { top: 0; gap: 10px; padding: 12px 14px; border-radius: 12px; }
+  .match-score { gap: 12px; }
+  .match-score > strong { font-size: 38px; }
+  .match-score > span { font-size: 20px; }
+  .score-main { flex: 1; }
+  .score-controls { width: auto; gap: 8px; order: 0; margin-left: auto; }
+  .pause-button { padding: 10px; flex: 0; min-height: 44px; }
+  .pause-button > span { display: none; }
+  .score-reset { width: 44px; min-height: 44px; }
+  .match-status { order: 1; flex: 1 1 100%; font-size: 15px; }
+  .match-status > span { font-size: 13px; margin-top: 0; }
+  .score-label { font-size: 10px; letter-spacing: 1px; }
+  .results-panel { padding: 18px 14px; }
+  .results-heading h2 { font-size: 22px; }
+  .chart-scope { width: 100%; }
+  .chart-scope button { flex: 1; padding: 12px 8px; font-size: 15px; }
+  .chart-summary { gap: 18px; }
+  .chart-summary strong { font-size: 26px; }
+  .results-plot { min-height: 180px; }
+  .chart-detail { font-size: 15px; }
+}
