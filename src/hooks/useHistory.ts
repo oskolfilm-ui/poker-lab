@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { liveQuery } from 'dexie'
 import type { GameState } from '../game/engine'
-import { completedHand, historyDb, listHands, type CompletedHand } from '../history/store'
+import type { HandContext } from '../game/match'
+import { completedHand, emptyStatistics, historyDb, listHands, readStatistics, saveCompletedHand, type CompletedHand, type StatisticsSnapshot } from '../history/store'
 
 const PENDING_KEY = 'poker-lab-pending-v1'
 function readPending(): CompletedHand[] {
@@ -16,15 +18,29 @@ function mergeHands(...groups: CompletedHand[][]) {
   return [...new Map(groups.flat().map(hand => [hand.id, hand])).values()].sort((a, b) => b.startedAt.localeCompare(a.startedAt))
 }
 
-export function useHistory(game: GameState) {
+export function useHistory(game: GameState, context: HandContext) {
   const pending = useRef<CompletedHand[]>(readPending())
   const [hands, setHands] = useState<CompletedHand[]>(pending.current)
+  const [statistics, setStatistics] = useState<StatisticsSnapshot>({ ...emptyStatistics, sessionHands: 0 })
   const [status, setStatus] = useState<'loading' | 'saving' | 'saved' | 'error'>('loading')
+  const [savedHandId, setSavedHandId] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
   useEffect(() => {
     let cancelled = false
+    let subscription: { unsubscribe: () => void } | undefined
+    void historyDb.open().then(() => {
+      if (cancelled) return
+      subscription = liveQuery(async () => ({ hands: await listHands(), statistics: await readStatistics(context.sessionId) })).subscribe({
+        next: snapshot => { setHands(mergeHands(snapshot.hands, pending.current)); setStatistics(snapshot.statistics) },
+        error: () => setStatus('error'),
+      })
+    }).catch(() => { if (!cancelled) setStatus('error') })
+    return () => { cancelled = true; subscription?.unsubscribe() }
+  }, [context.sessionId, retryCount])
+  useEffect(() => {
+    let cancelled = false
     if (game.result) {
-      pending.current = mergeHands(pending.current, [completedHand(game)])
+      pending.current = mergeHands(pending.current, [completedHand(game, context)])
       writePending(pending.current)
       setHands(previous => mergeHands(previous, pending.current))
     }
@@ -32,18 +48,24 @@ export function useHistory(game: GameState) {
     setStatus(batch.length ? 'saving' : 'loading')
     async function sync() {
       try {
-        for (const hand of batch) await historyDb.hands.put(hand)
+        // Explicit open retries Dexie's failed automatic opening after storage recovers.
+        await historyDb.open()
+        for (const hand of batch) await saveCompletedHand(hand)
         const stored = await listHands()
+        const stats = await readStatistics(context.sessionId)
         const savedIds = new Set(batch.map(hand => hand.id))
         pending.current = pending.current.filter(hand => !savedIds.has(hand.id))
         writePending(pending.current)
-        if (!cancelled) { setHands(mergeHands(stored, pending.current)); setStatus('saved') }
+        if (!cancelled) {
+          setHands(mergeHands(stored, pending.current)); setStatistics(stats)
+          setSavedHandId(game.result ? game.id : null); setStatus('saved')
+        }
       } catch {
         if (!cancelled) { setHands(previous => mergeHands(previous, pending.current)); setStatus('error') }
       }
     }
     void sync()
     return () => { cancelled = true }
-  }, [game.id, game.result, retryCount])
-  return { hands, status, retry: () => setRetryCount(count => count + 1) }
+  }, [game.id, game.result, context.sessionId, context.matchId, retryCount])
+  return { hands, statistics, status, savedHandId, retry: () => setRetryCount(count => count + 1) }
 }

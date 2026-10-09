@@ -1,72 +1,111 @@
-import { useEffect, useRef, useState } from 'react'
-import { ArrowUpRight, Check, ChevronRight, CircleAlert, History as HistoryIcon, Layers3, LayoutGrid, RefreshCw, ShieldCheck, Spade, TrendingUp, X } from 'lucide-react'
-import { applyAction, nextHand, startHand, streetLabels, type Action, type GameState } from './game/engine'
+import { useEffect, useState } from 'react'
+import { ArrowUpRight, Check, ChevronRight, CircleAlert, History as HistoryIcon, Layers3, LayoutGrid, Pause, Play, RotateCcw, ShieldCheck, Spade, TrendingUp, X } from 'lucide-react'
+import { applyAction, startHand, type Action, type GameState } from './game/engine'
+import { advanceHand, matchWinner, type HandContext } from './game/match'
 import { chooseAction, decisionView } from './game/ai'
 import { PokerTable } from './components/PokerTable'
 import { ActionPanel, SessionResetButton } from './components/ActionPanel'
+import { ConfirmDialog } from './components/ConfirmDialog'
 import { History, eventText } from './components/History'
 import { useHistory } from './hooks/useHistory'
+import { useAutoAdvance } from './hooks/useAutoAdvance'
+import { resetMatchScore } from './history/store'
 
 const SESSION_KEY = 'poker-lab-session-v1'
-function initialGame(): GameState {
+const CONTEXT_KEY = 'poker-lab-context-v1'
+interface Session { game: GameState; context: HandContext; paused: boolean }
+const newContext = (): HandContext => ({ sessionId: crypto.randomUUID(), matchId: crypto.randomUUID() })
+function initialSession(): Session {
+  let game = startHand()
+  let context = newContext()
+  let paused = false
   try {
     const stored = JSON.parse(sessionStorage.getItem(SESSION_KEY) ?? 'null') as GameState | null
-    if (stored?.schemaVersion === 1 && stored.players.length === 2 && stored.players.every(player => Number.isSafeInteger(player.stack) && player.stack >= 0) && Array.isArray(stored.deck) && Array.isArray(stored.events)) return stored
+    if (stored?.schemaVersion === 1 && stored.players.length === 2 && stored.players.every(player => Number.isSafeInteger(player.stack) && player.stack >= 0) && Array.isArray(stored.deck) && Array.isArray(stored.events)) game = stored
+    const metadata = JSON.parse(sessionStorage.getItem(CONTEXT_KEY) ?? 'null')
+    if (metadata && typeof metadata.sessionId === 'string' && typeof metadata.matchId === 'string') {
+      context = { sessionId: metadata.sessionId, matchId: metadata.matchId }; paused = metadata.paused === true
+    }
   } catch { /* A fresh session is safe when browser storage is unavailable. */ }
-  return startHand()
-}
-
-function ResetDialog({ onClose, onConfirm, unfinished }: { onClose: () => void; onConfirm: () => void; unfinished: boolean }) {
-  const dialog = useRef<HTMLDialogElement>(null)
-  useEffect(() => { dialog.current?.showModal() }, [])
-  return <dialog ref={dialog} className="reset-dialog" onCancel={onClose} aria-labelledby="reset-title"><button className="dialog-close icon-button" onClick={onClose} aria-label="Закрыть"><X size={19} /></button><div className="reset-symbol"><RefreshCw size={24} /></div><h2 id="reset-title">Начнём с чистого стека?</h2><p>У каждого игрока снова будет 200 фишек.{unfinished ? ' Незавершённая раздача не попадёт в историю.' : ''} Сохранённые руки останутся в истории.</p><div><button className="secondary-button" autoFocus onClick={onClose}>Продолжить игру</button><button className="primary-button" onClick={onConfirm}>Новая сессия</button></div></dialog>
+  return { game, context, paused }
 }
 
 export default function App() {
-  const [game, setGame] = useState<GameState>(initialGame)
+  const [session, setSession] = useState<Session>(initialSession)
+  const { game, context, paused } = session
   const [view, setView] = useState<'practice' | 'history'>('practice')
-  const [resetOpen, setResetOpen] = useState(false)
+  const [dialog, setDialog] = useState<'session' | 'score' | null>(null)
+  const [resettingScore, setResettingScore] = useState(false)
   const [error, setError] = useState('')
   const [sessionWarning, setSessionWarning] = useState(false)
-  const { hands, status, retry } = useHistory(game)
+  const { hands, statistics, status, savedHandId, retry } = useHistory(game, context)
+  const saved = !!game.result && status === 'saved' && savedHandId === game.id
+  const winner = matchWinner(game)
   useEffect(() => {
-    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(game)) } catch { setSessionWarning(true) }
-  }, [game])
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(game))
+      sessionStorage.setItem(CONTEXT_KEY, JSON.stringify({ ...context, paused }))
+    } catch { setSessionWarning(true) }
+  }, [game, context, paused])
   useEffect(() => {
-    if (game.toAct !== 1 || game.result) return
+    if (game.toAct !== 1 || game.result || dialog) return
     const snapshot = game
     const timeout = window.setTimeout(() => {
       try {
-        const action = chooseAction(decisionView(snapshot, 1))
-        setGame(current => current === snapshot ? applyAction(current, 1, action) : current)
+        const updated = applyAction(snapshot, 1, chooseAction(decisionView(snapshot, 1)))
+        setSession(current => current.game === snapshot ? { ...current, game: updated } : current)
       } catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось выполнить ход ИИ.') }
     }, 1000)
     return () => window.clearTimeout(timeout)
-  }, [game])
+  }, [game, dialog])
   const act = (action: Action) => {
-    try { setGame(applyAction(game, 0, action)); setError('') }
+    try { setSession({ ...session, game: applyAction(game, 0, action) }); setError('') }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось выполнить действие.') }
   }
   const beginNext = () => {
-    try { setGame(nextHand(game)); setError('') }
-    catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось начать раздачу.') }
+    if (!saved) return
+    try {
+      const updated = advanceHand(game)
+      setSession(current => current.game.id !== game.id ? current : {
+        ...current, game: updated,
+        context: winner === null ? current.context : { ...current.context, matchId: crypto.randomUUID() },
+      })
+      setError('')
+    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось начать раздачу.') }
+  }
+  const seconds = useAutoAdvance(game.id, !!game.result, !paused && view === 'practice' && !dialog && !error, saved, beginNext)
+  const clearScore = async () => {
+    setResettingScore(true)
+    try { await resetMatchScore(); setDialog(null) }
+    catch { setError('Не удалось сбросить счёт матчей в IndexedDB. Попробуйте ещё раз.') }
+    finally { setResettingScore(false) }
   }
   const net = (game.result ? game.players[0].stack : game.players[0].initialStack) - 200
-  const finishedCount = game.number - (game.result ? 0 : 1)
   const recent = game.events.filter(event => event.type !== 'blind').slice(-3)
-  const changeView = (next: 'practice' | 'history') => setView(next)
   return <>
-    <header className="site-header"><div className="header-inner"><button className="brand" onClick={() => changeView('practice')} aria-label="POKER LAB — тренировка"><span className="brand-mark"><Spade size={23} fill="currentColor" /></span><span>POKER<span>LAB</span></span><span className="brand-divider" /></button><nav aria-label="Главная навигация"><button className={view === 'practice' ? 'selected' : ''} onClick={() => changeView('practice')}><LayoutGrid size={16} />Тренировка</button><button className={view === 'history' ? 'selected' : ''} onClick={() => changeView('history')}><HistoryIcon size={17} />История рук{hands.length > 0 && <span className="nav-count">{hands.length}</span>}</button></nav><div className="header-status"><span className="tiny-dot green" />Ваше пространство для практики</div><button className="profile" aria-label="Игрок Hero" title="Hero · локальная сессия">H</button></div></header>
+    <header className="site-header"><div className="header-inner"><button className="brand" onClick={() => setView('practice')} aria-label="POKER LAB — тренировка"><span className="brand-mark"><Spade size={23} fill="currentColor" /></span><span>POKER<span>LAB</span></span><span className="brand-divider" /></button><nav aria-label="Главная навигация"><button className={view === 'practice' ? 'selected' : ''} onClick={() => setView('practice')}><LayoutGrid size={18} />Тренировка</button><button className={view === 'history' ? 'selected' : ''} onClick={() => setView('history')}><HistoryIcon size={18} />История рук{hands.length > 0 && <span className="nav-count">{hands.length}</span>}</button></nav><div className="header-status"><span className="tiny-dot green" />Ваше пространство для практики</div><button className="profile" aria-label="Игрок Hero" title="Hero · локальная сессия">H</button></div></header>
     <main className="app-main">
-      {(error || status === 'error' || sessionWarning) && <div className="error-banner" role="alert"><CircleAlert size={18} /><span>{error || (status === 'error' ? 'IndexedDB недоступна: история пока не сохранена в базе. Руки доступны для экспорта; повторите сохранение.' : 'Браузер не позволяет восстановить сессию после перезагрузки. История в IndexedDB сохраняется отдельно.')}</span>{status === 'error' && <button onClick={retry}>Повторить сохранение</button>}{error && <button onClick={() => setError('')} aria-label="Закрыть сообщение"><X size={16} /></button>}</div>}
+      {(error || status === 'error' || sessionWarning) && <div className="error-banner" role="alert"><CircleAlert size={20} /><span>{error || (status === 'error' ? 'IndexedDB недоступна: история и статистика ожидают сохранения. Автопереход остановлен; руки доступны для экспорта.' : 'Браузер не позволяет восстановить сессию после перезагрузки. История в IndexedDB сохраняется отдельно.')}</span>{status === 'error' && <button onClick={retry}>Повторить сохранение</button>}{error && <button onClick={() => setError('')} aria-label="Закрыть сообщение"><X size={18} /></button>}</div>}
+      {view === 'practice' && <section className="section-heading"><div><div className="eyebrow"><span />МЕНЬШЕ СЛУЧАЙНОСТИ. БОЛЬШЕ ПРАКТИКИ.</div><h1>Покер — это решения<span>.</span></h1><p>Один на один с ИИ. Ваш темп. Пространство для роста.</p></div><div className="practice-badge"><span className="practice-badge-icon"><ShieldCheck size={24} /></span><div>Свободная практика<span>Без реальных денег</span></div></div></section>}
+      <section className="match-scoreboard" aria-label="Общий счёт матчей">
+        <div><span className="score-label">ПОБЕДЫ В МАТЧАХ</span><div className="match-score" data-testid="match-score" aria-live="polite"><span>HERO</span><strong>{statistics.heroWins} : {statistics.aiWins}</strong><span>AI</span></div></div>
+        <p className="match-status" aria-live="polite">{winner !== null ? `${winner === 0 ? 'Hero' : 'AdaptiveAI'} выиграл матч!` : paused ? 'Автопереход на паузе' : 'Автопереход через 3 секунды после раздачи'}<span>{winner !== null ? 'Следующий матч — со стеками 200 / 200' : 'Блайнды 1 / 2 · стартовый стек 100 BB'}</span></p>
+        <div className="score-controls"><button className="secondary-button pause-button" aria-pressed={paused} onClick={() => setSession(current => ({ ...current, paused: !current.paused }))}>{paused ? <Play size={20} /> : <Pause size={20} />}{paused ? 'Продолжить автоигру' : 'Пауза автоигры'}</button><button className="icon-button score-reset" disabled={status !== 'saved' || resettingScore} aria-label="Сбросить счёт матчей" title="Сбросить счёт матчей" onClick={() => setDialog('score')}><RotateCcw size={21} /></button></div>
+      </section>
+      <section className="session-stats" aria-label="Статистика раздач">
+        <div className="session-label"><span className="stat-icon"><TrendingUp size={22} /></span><div>Текущая сессия<span>Hero vs AdaptiveAI</span></div></div>
+        <div className="stat"><span>Всего раздач</span><strong data-testid="total-hands">{statistics.totalHands}</strong></div>
+        <div className="stat"><span>Раздач в сессии</span><strong data-testid="session-hands">{statistics.sessionHands}</strong></div>
+        <div className="stat"><span>Результат Hero в матче</span><strong className={net < 0 ? 'text-negative' : 'text-positive'}>{net > 0 ? '+' : ''}{net}<small> фишек</small></strong></div>
+        <SessionResetButton disabled={!!game.result && !saved} onClick={() => setDialog('session')} />
+      </section>
       {view === 'practice' ? <>
-        <section className="section-heading"><div><div className="eyebrow"><span />МЕНЬШЕ СЛУЧАЙНОСТИ. БОЛЬШЕ ПРАКТИКИ.</div><h1>Покер — это решения<span>.</span></h1><p>Один на один с ИИ. Ваш темп. Пространство для роста.</p></div><div className="practice-badge"><span className="practice-badge-icon"><ShieldCheck size={21} /></span><div>Свободная практика<span>Без реальных денег</span></div></div></section>
-        <section className="session-stats" aria-label="Статистика сессии"><div className="session-label"><span className="stat-icon"><TrendingUp size={19} /></span><div>Текущая сессия<span>Hero vs AdaptiveAI</span></div></div><div className="stat"><span>Результат</span><strong className={net < 0 ? 'text-negative' : 'text-positive'}>{net > 0 ? '+' : ''}{net}<small> фишек</small></strong></div><div className="stat"><span>Сыграно рук</span><strong>{finishedCount.toString().padStart(2, '0')}<small> раздач</small></strong></div><div className="stat"><span>Блайнды</span><strong>1 / 2<small> NL Hold’em</small></strong></div><SessionResetButton onClick={() => setResetOpen(true)} /></section>
-        <section className="game-layout" aria-label="Покерный тренажёр"><div className="table-column"><div className="table-heading"><div><span className="table-tab"><Layers3 size={16} />Heads-up</span><span className="table-heading-secondary">2 игрока · 100 BB старт</span></div><div className="hand-number">Раздача <strong>#{String(game.number).padStart(3, '0')}</strong><span className="tiny-dot" />{streetLabels[game.street]}</div></div><PokerTable game={game} /><div className="table-activity" aria-live="polite"><span className="activity-label">ЗА СТОЛОМ</span><div>{recent.length ? recent.map((event, index) => <span key={`${game.id}-${game.events.length}-${index}`} className={index === recent.length - 1 ? 'latest-event' : ''}>{eventText(event)}</span>) : <span>Блайнды поставлены. Карты розданы — можно начинать.</span>}</div></div><div className="table-bottom"><span><ShieldCheck size={14} />{status === 'saving' ? 'Сохраняем историю…' : status === 'error' ? 'История ожидает сохранения' : 'История рук сохраняется автоматически'}</span><button className="text-button" onClick={() => changeView('history')}>Открыть историю<ArrowUpRight size={14} /></button></div></div><ActionPanel game={game} onAction={act} onNext={beginNext} onReset={() => setResetOpen(true)} saving={status === 'saving'} /></section>
-        <div className="practice-bottom"><div><span className="small-spade">♠</span><p><strong>Практика сегодня. Уверенность за столом завтра.</strong>Играйте, пробуйте разные линии и находите свой подход.</p></div><span><Check size={13} />Локально в вашем браузере</span></div>
-      </> : <History hands={hands} loading={status === 'loading'} onPractice={() => changeView('practice')} />}
+        <section className="game-layout" aria-label="Покерный тренажёр"><div className="table-column"><div className="table-heading"><div><span className="table-tab"><Layers3 size={19} />Heads-up</span><span className="table-heading-secondary">2 игрока · 100 BB старт</span></div><div className="hand-number">Раздача <strong>#{String(game.number).padStart(3, '0')}</strong></div></div><PokerTable game={game} /><div className="table-activity" aria-live="polite"><span className="activity-label">ЗА СТОЛОМ</span><div>{recent.length ? recent.map((event, index) => <span key={`${game.id}-${game.events.length}-${index}`} className={index === recent.length - 1 ? 'latest-event' : ''}>{eventText(event)}</span>) : <span>Блайнды поставлены. Карты розданы — можно начинать.</span>}</div></div><div className="table-bottom"><span><ShieldCheck size={17} />{status === 'saving' ? 'Сохраняем историю и статистику…' : status === 'error' ? 'История ожидает сохранения' : 'История рук сохраняется автоматически'}</span><button className="text-button" onClick={() => setView('history')}>Открыть историю<ArrowUpRight size={17} /></button></div></div><ActionPanel game={game} onAction={act} onNext={beginNext} saving={!saved} paused={paused} seconds={seconds} /></section>
+        <div className="practice-bottom"><div><span className="small-spade">♠</span><p><strong>Практика сегодня. Уверенность за столом завтра.</strong>Играйте, пробуйте разные линии и находите свой подход.</p></div><span><Check size={16} />Локально в вашем браузере</span></div>
+      </> : <History hands={hands} loading={status === 'loading'} onPractice={() => setView('practice')} />}
     </main>
-    <footer className="site-footer"><span>POKER LAB<span className="footer-version">v0.1</span></span><span>Создано для осознанной игры.</span><span>TRAINING ONLY<ChevronRight size={12} /></span></footer>
-    {resetOpen && <ResetDialog unfinished={!game.result} onClose={() => setResetOpen(false)} onConfirm={() => { setGame(startHand()); setResetOpen(false); setError('') }} />}
+    <footer className="site-footer"><span>POKER LAB<span className="footer-version">v0.2</span></span><span>Создано для осознанной игры.</span><span>TRAINING ONLY<ChevronRight size={16} /></span></footer>
+    {dialog === 'session' && <ConfirmDialog title="Начнём новую сессию?" description={`У каждого игрока снова будет 200 фишек, счётчик раздач в сессии обнулится.${!game.result ? ' Незавершённая раздача не попадёт в историю.' : ''} Общий счёт матчей, всего раздач и история сохранятся.`} confirmLabel="Новая сессия" onClose={() => setDialog(null)} onConfirm={() => { setSession({ game: startHand(), context: newContext(), paused }); setDialog(null); setError('') }} />}
+    {dialog === 'score' && <ConfirmDialog title="Сбросить общий счёт матчей?" description="Счёт HERO : AI станет 0 : 0. История рук, оба счётчика раздач и текущий матч сохранятся." confirmLabel="Сбросить счёт" busy={resettingScore} onClose={() => setDialog(null)} onConfirm={() => void clearScore()} />}
   </>
 }

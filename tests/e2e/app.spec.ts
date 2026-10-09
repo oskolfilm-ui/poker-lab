@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 async function completeHand(page: Page) {
   for (let action = 0; action < 80; action++) {
-    if (await page.getByRole('button', { name: 'Следующая раздача' }).count() || await page.getByRole('button', { name: 'Начать новую сессию' }).count()) return
+    if (await page.getByRole('button', { name: 'Следующая раздача' }).count() || await page.getByRole('button', { name: 'Следующий матч' }).count()) return
     const passive = page.getByRole('button', { name: /^(Check|Call \d+)$/ })
     if (await passive.count() && await passive.isEnabled()) await passive.click()
     else await page.waitForTimeout(200)
@@ -14,17 +14,24 @@ test('table renders without browser errors or horizontal overflow', async ({ pag
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('./')
+  await page.getByRole('button', { name: 'Пауза автоигры', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Покер — это решения.' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Fold', exact: true })).toBeEnabled()
   await expect(page.getByRole('button', { name: 'Call 1', exact: true })).toBeEnabled()
   await expect(page.locator('.seat-hero .playing-card')).toHaveCount(2)
   await expect(page.locator('.seat-ai .card-back')).toHaveCount(2)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  const board = await page.locator('.community').boundingBox()
+  const heroCards = await page.locator('.seat-hero .seat-cards').boundingBox()
+  const aiCards = await page.locator('.seat-ai .seat-cards').boundingBox()
+  expect(board!.y + board!.height + 8).toBeLessThanOrEqual(heroCards!.y)
+  expect(aiCards!.y + aiCards!.height + 12).toBeLessThanOrEqual(board!.y)
   expect(errors).toEqual([])
 })
 
 test('fold saves once, export is labelled, reload retains history and button rotates', async ({ page }) => {
   await page.goto('./')
+  await page.getByRole('button', { name: 'Пауза автоигры', exact: true }).click()
   await page.getByRole('button', { name: 'Fold', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Следующая раздача' })).toBeEnabled()
   await page.getByRole('button', { name: /История рук/ }).click()
@@ -49,13 +56,26 @@ test('fold saves once, export is labelled, reload retains history and button rot
   await expect(page.getByLabel('AdaptiveAI: Button / Small Blind')).toBeVisible()
 })
 
+test('narrow screens keep the scoreboard and history inside the viewport after pausing', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 })
+  await page.goto('./')
+  await page.getByRole('button', { name: 'Пауза автоигры', exact: true }).click()
+  await page.getByRole('button', { name: 'Fold', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Следующая раздача', exact: true })).toBeEnabled()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  await page.getByRole('button', { name: /История рук/ }).click()
+  await expect(page.locator('.hand-entry')).toHaveCount(1)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+})
+
 test('plays a full hand against the AI and preserves all 400 chips', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.goto('./')
+  await page.getByRole('button', { name: 'Пауза автоигры', exact: true }).click()
   await completeHand(page)
   await expect(page.locator('.result-net')).toBeVisible()
-  await expect(page.getByRole('button', { name: /^(Следующая раздача|Начать новую сессию)$/ })).toBeEnabled()
+  await expect(page.getByRole('button', { name: /^(Следующая раздача|Следующий матч)$/ })).toBeEnabled()
   const game = await page.evaluate(() => JSON.parse(sessionStorage.getItem('poker-lab-session-v1')!))
   expect(game.result).toBeTruthy()
   expect(game.players[0].stack + game.players[1].stack).toBe(400)
@@ -68,6 +88,7 @@ test('plays a full hand against the AI and preserves all 400 chips', async ({ pa
 
 test('sizing controls, history filters and reset work', async ({ page }) => {
   await page.goto('./')
+  await page.getByRole('button', { name: 'Пауза автоигры', exact: true }).click()
   const amount = page.getByLabel('Размер ставки в фишках')
   await amount.fill('8')
   await expect(page.getByRole('button', { name: 'Raise to 8' })).toBeEnabled()

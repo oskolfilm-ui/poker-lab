@@ -18,11 +18,11 @@ function Seat({ game, index }: { game: GameState; index: PlayerIndex }) {
     <div className="seat-cards">{player.hole.map((card, key) => <Card key={key} card={card} hidden={!reveal} />)}</div>
     <div className="seat-info">
       <div className="seat-avatar">{won ? <Trophy size={21} /> : index === 0 ? <UserRound size={22} /> : <Bot size={23} />}</div>
-      <div className="seat-text"><div className="seat-name">{player.name}{index === 0 && <span>вы</span>}</div><div className="seat-stack">{player.stack}<span>фишек · {(player.stack / 2).toLocaleString('ru-RU')} BB</span></div></div>
+      <div className="seat-text"><div className="seat-name">{player.name}{index === 0 && <span>вы</span>}</div><div className="seat-stack"><strong data-testid={`stack-${index}`}>{player.stack}</strong><span>СТЕК · {(player.stack / 2).toLocaleString('ru-RU')} BB</span></div></div>
       {index === game.dealer && <span className="dealer" title="Button / Small Blind" aria-label={`${player.name}: Button / Small Blind`}>D</span>}
     </div>
     <div className={`seat-status ${active ? 'live' : ''}`}>{active && index === 1 ? <span className="thinking-dots"><i /><i /><i /></span> : won ? <Check size={12} /> : <span className="status-dot" />}{status}</div>
-    {player.streetBet > 0 && !game.result && <div className="seat-bet"><ChipStack amount={player.streetBet} /></div>}
+    <div className="seat-bet" aria-label={`${player.name}: текущая ставка`}><span className="bet-caption">СТАВКА</span><div data-testid={`bet-${index}`}><ChipStack amount={game.result ? 0 : player.streetBet} /></div></div>
   </div>
 }
 
@@ -35,8 +35,8 @@ export function PokerTable({ game }: { game: GameState }) {
     <div className="felt"><div className="felt-line" /><div className="felt-brand">POKER LAB</div></div>
     <Seat game={game} index={1} />
     <div className="community">
-      <div className="pot-label">{game.result ? 'Итоговый банк' : 'Общий банк'}</div>
-      <div className="pot-amount"><span className="pot-chip" />{pot}<span>фишек</span></div>
+      <div className="pot-label">{game.result ? 'POT · ИТОГ' : 'POT'}</div>
+      <div className="pot-amount"><span className="pot-chip" /><strong data-testid="pot">{pot}</strong><span>фишек</span></div>
       <div className="community-cards" aria-label="Общие карты">{Array.from({ length: 5 }, (_, index) => <Card key={index} card={game.board[index]} placeholder={!game.board[index]} />)}</div>
       <div className="street-label">{game.result ? (game.result.reason === 'fold' ? 'Победа без вскрытия' : 'Вскрытие') : streetLabels[game.street]}<span>·</span>{game.board.length}/5 карт</div>
     </div>
