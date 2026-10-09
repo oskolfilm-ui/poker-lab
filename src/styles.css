@@ -564,3 +564,15 @@ to{opacity:1;translate:0 0}
 }
 
 .primary-button.raise-button { font-size: 20px; }
+
+.ai-settings { display: grid; grid-template-columns: minmax(250px, .8fr) minmax(0, 1.2fr); align-items: start; gap: 28px; margin: 24px 0; padding: 24px; background: var(--surface, #fff); border: 1px solid #e3e6e2; border-radius: 16px; }
+.difficulty-control label { display: block; font-weight: 800; font-size: 18px; margin-bottom: 10px; }
+.difficulty-control select { width: 100%; font: inherit; font-size: 20px; font-weight: 700; padding: 12px 14px; background: #f3f6f2; color: #1c3024; border: 1px solid #ccd7cd; border-radius: 10px; }
+.ai-settings p { font-size: 15px; line-height: 1.6; margin: 10px 0 0; color: #647069; }
+.hero-model summary { cursor: pointer; padding: 12px 0; font-size: 18px; font-weight: 700; }
+.model-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.model-grid > div { display: flex; flex-direction: column; background: #f3f6f2; border-radius: 10px; padding: 12px; gap: 5px; }
+.model-grid strong { font-size: 14px; }
+.model-grid span { font-size: 22px; font-weight: 800; }
+.model-grid small { font-size: 12px; color: #68746d; }
+@media (max-width: 700px) { .ai-settings { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 16px; } .model-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

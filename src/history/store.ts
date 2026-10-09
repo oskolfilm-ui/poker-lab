@@ -1,6 +1,9 @@
 import Dexie, { type Table } from 'dexie'
 import type { GameState, HandResult, PlayerIndex } from '../game/engine'
 import { matchWinner, type HandContext } from '../game/match'
+import { emptyProfile, observeHand, type HeroProfile } from '../game/ai/profile'
+import { handObservation } from '../game/ai/observation'
+import { DEFAULT_DIFFICULTY, isDifficulty, type Difficulty } from '../game/ai/levels'
 
 export type CompletedHand = Omit<GameState, 'deck'> & { result: HandResult; endedAt: string; context?: HandContext }
 export interface Statistics { id: 'global'; totalHands: number; heroWins: number; aiWins: number }
@@ -14,6 +17,8 @@ export class HistoryDatabase extends Dexie {
   statistics!: Table<Statistics, string>
   sessions!: Table<SessionStatistics, string>
   matches!: Table<MatchRecord, string>
+  profiles!: Table<HeroProfile, string>
+  preferences!: Table<{ id: 'ai'; difficulty: Difficulty }, string>
   constructor(name = 'poker-lab-history') {
     super(name)
     this.version(1).stores({ hands: 'id, startedAt, endedAt' })
@@ -22,6 +27,14 @@ export class HistoryDatabase extends Dexie {
     }).upgrade(async transaction => {
       // Existing history contributes to the lifetime count, never to a new session.
       await transaction.table('statistics').put({ ...emptyStatistics, totalHands: await transaction.table('hands').count() })
+    })
+    this.version(3).stores({ profiles: 'id', preferences: 'id' }).upgrade(async transaction => {
+      // Reconstruct once, from completed public actions only. No hole cards enter the model.
+      let profile = emptyProfile()
+      for (const hand of await transaction.table('hands').orderBy('startedAt').toArray() as CompletedHand[]) {
+        profile = observeHand(profile, handObservation(hand))
+      }
+      await transaction.table('profiles').put(profile)
     })
   }
 }
@@ -36,11 +49,12 @@ export function completedHand(state: GameState, context?: HandContext): Complete
 
 export async function saveCompletedHand(hand: CompletedHand, db = historyDb): Promise<string> {
   if (!hand.result || !hand.endedAt) throw new Error('Можно сохранить только завершённую раздачу.')
-  return db.transaction('rw', db.hands, db.statistics, db.sessions, db.matches, async () => {
+  return db.transaction('rw', [db.hands, db.statistics, db.sessions, db.matches, db.profiles], async () => {
     // One transaction and unique IDs protect both StrictMode and concurrent tabs.
     if (await db.hands.get(hand.id)) return hand.id
     const stats = await db.statistics.get('global') ?? { ...emptyStatistics, totalHands: await db.hands.count() }
     await db.hands.add(hand)
+    await db.profiles.put(observeHand(await readHeroProfile(db), handObservation(hand)))
     stats.totalHands++
     if (hand.context) {
       const { sessionId, matchId } = hand.context
@@ -56,6 +70,16 @@ export async function saveCompletedHand(hand: CompletedHand, db = historyDb): Pr
     await db.statistics.put(stats)
     return hand.id
   })
+}
+
+export async function readHeroProfile(db = historyDb) { return await db.profiles.get('hero') ?? emptyProfile() }
+export async function readDifficulty(db = historyDb): Promise<Difficulty> {
+  const value = (await db.preferences.get('ai'))?.difficulty
+  return isDifficulty(value) ? value : DEFAULT_DIFFICULTY
+}
+export async function saveDifficulty(difficulty: Difficulty, db = historyDb) {
+  if (!isDifficulty(difficulty)) throw new Error('Неизвестный уровень сложности.')
+  await db.preferences.put({ id: 'ai', difficulty })
 }
 
 export function saveHand(state: GameState, context?: HandContext, db = historyDb) {

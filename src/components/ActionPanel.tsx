@@ -1,3 +1,4 @@
+import type { Difficulty } from '../game/ai/levels'
 import { useEffect, useState } from 'react'
 import { ArrowRight, ArrowUpRight, ChevronRight, CircleHelp, Coins, RotateCcw, ShieldCheck, Sparkles } from 'lucide-react'
 import { legalActions, potSize, streetLabels, type Action, type GameState } from '../game/engine'
@@ -5,7 +6,7 @@ import { positionLabel } from '../history/export'
 import { matchWinner } from '../game/match'
 import { potOdds } from '../game/decision'
 
-export function ActionPanel({ game, onAction, onNext, saving, paused, seconds }: { game: GameState; onAction: (action: Action) => void; onNext: () => void; saving: boolean; paused: boolean; seconds: number | null }) {
+export function ActionPanel({ difficulty, game, onAction, onNext, saving, paused, seconds }: { difficulty: Difficulty; game: GameState; onAction: (action: Action) => void; onNext: () => void; saving: boolean; paused: boolean; seconds: number | null }) {
   const legal = legalActions(game, 0)
   const decision = legalActions(game, game.toAct ?? 0)
   const [size, setSize] = useState('6')
@@ -53,7 +54,7 @@ export function ActionPanel({ game, onAction, onNext, saving, paused, seconds }:
         <div className="decision-footer"><ShieldCheck size={13} />{ready ? `${streetLabels[game.street]} · только легальные действия` : 'Действия станут доступны в ваш ход'}</div>
       </>}
     </div>
-    <div className="opponent-panel"><div className="opponent-title"><div className="ai-icon">✳</div><div><strong>AdaptiveAI</strong><span>Ваш партнёр по практике</span></div><span className="online-dot" /></div><div className="strategy-tag">Базовая стратегия <span>v0.1</span></div><p>Оценивает силу своей руки и шансы банка. Не видит ваши карты.</p></div>
+    <div className="opponent-panel"><div className="opponent-title"><div className="ai-icon">✳</div><div><strong>AdaptiveAI</strong><span>Ваш партнёр по практике</span></div><span className="online-dot" /></div><div className="strategy-tag">Уровень <span data-testid="current-difficulty">{difficulty}</span></div><p>Учитывает диапазоны и публичные действия. Закрытые карты Hero и колода недоступны стратегии.</p></div>
     <div className="practice-tip"><CircleHelp size={16} /><p><strong>Каждое решение имеет значение.</strong>Размер ставки указан в фишках. Для рейза — итоговая ставка на текущей улице.</p></div>
   </aside>
 }

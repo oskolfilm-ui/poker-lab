@@ -1,3 +1,4 @@
+import type { Difficulty } from '../game/ai/levels'
 import { Bot, UserRound, Check, Trophy } from 'lucide-react'
 import { Card } from './Card'
 import { potSize, streetLabels, type GameState, type PlayerIndex } from '../game/engine'
@@ -26,11 +27,11 @@ function Seat({ game, index }: { game: GameState; index: PlayerIndex }) {
   </div>
 }
 
-export function PokerTable({ game }: { game: GameState }) {
+export function PokerTable({ game, difficulty }: { game: GameState; difficulty: Difficulty }) {
   const pot = game.result?.pot ?? potSize(game)
   return <div className="table-scene">
     <div className="table-grain" />
-    <div className="table-corner"><span className="live-dot" /> PRACTICE TABLE <span>01</span></div>
+    <div className="table-corner"><span className="live-dot" /> ADAPTIVE AI <span>{difficulty}</span></div>
     <div className="table-format">NO-LIMIT HOLD’EM <span>1 / 2</span></div>
     <div className="felt"><div className="felt-line" /><div className="felt-brand">POKER LAB</div></div>
     <Seat game={game} index={1} />

@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import { ArrowUpRight, Check, ChevronRight, CircleAlert, History as HistoryIcon, Layers3, LayoutGrid, Pause, Play, RotateCcw, ShieldCheck, Spade, TrendingUp, X } from 'lucide-react'
 import { applyAction, startHand, type Action, type GameState } from './game/engine'
 import { advanceHand, matchWinner, type HandContext } from './game/match'
-import { chooseAction, decisionView } from './game/ai'
+import { decisionView } from './game/ai/view'
+import type { AIRequest, AIResponse } from './game/ai/protocol'
+import { AISettings } from './components/AISettings'
+import { useDifficulty } from './hooks/useDifficulty'
 import { PokerTable } from './components/PokerTable'
 import { ActionPanel, SessionResetButton } from './components/ActionPanel'
 import { ConfirmDialog } from './components/ConfirmDialog'
@@ -38,7 +41,8 @@ export default function App() {
   const [resettingScore, setResettingScore] = useState(false)
   const [error, setError] = useState('')
   const [sessionWarning, setSessionWarning] = useState(false)
-  const { hands, statistics, status, savedHandId, retry } = useHistory(game, context)
+  const { hands, statistics, profile: heroProfile, status, savedHandId, retry } = useHistory(game, context)
+  const ai = useDifficulty()
   const saved = !!game.result && status === 'saved' && savedHandId === game.id
   const winner = matchWinner(game)
   useEffect(() => {
@@ -48,16 +52,26 @@ export default function App() {
     } catch { setSessionWarning(true) }
   }, [game, context, paused])
   useEffect(() => {
-    if (game.toAct !== 1 || game.result || dialog) return
+    if (game.toAct !== 1 || game.result || dialog || !ai.ready) return
     const snapshot = game
+    let worker: Worker | undefined
     const timeout = window.setTimeout(() => {
       try {
-        const updated = applyAction(snapshot, 1, chooseAction(decisionView(snapshot, 1)))
-        setSession(current => current.game === snapshot ? { ...current, game: updated } : current)
+        worker = new Worker(new URL('./game/ai.worker.ts', import.meta.url), { type: 'module' })
+        worker.onmessage = (event: MessageEvent<AIResponse>) => {
+          worker?.terminate()
+          try {
+            if ('error' in event.data) throw new Error(event.data.error)
+            const updated = applyAction(snapshot, 1, event.data.action)
+            setSession(current => current.game === snapshot ? { ...current, game: updated } : current)
+          } catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось выполнить ход ИИ.') }
+        }
+        worker.onerror = () => { worker?.terminate(); setError('Не удалось загрузить стратегию ИИ. Перезагрузите страницу.') }
+        worker.postMessage({ view: decisionView(snapshot, 1), difficulty: ai.difficulty, profile: heroProfile } satisfies AIRequest)
       } catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось выполнить ход ИИ.') }
     }, 1000)
-    return () => window.clearTimeout(timeout)
-  }, [game, dialog])
+    return () => { window.clearTimeout(timeout); worker?.terminate() }
+  }, [game, dialog, ai.ready, ai.difficulty, heroProfile])
   const act = (action: Action) => {
     try { setSession({ ...session, game: applyAction(game, 0, action) }); setError('') }
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось выполнить действие.') }
@@ -100,11 +114,12 @@ export default function App() {
         <SessionResetButton disabled={!!game.result && !saved} onClick={() => setDialog('session')} />
       </section>
       {view === 'practice' ? <>
-        <section className="game-layout" aria-label="Покерный тренажёр"><div className="table-column"><div className="table-heading"><div><span className="table-tab"><Layers3 size={19} />Heads-up</span><span className="table-heading-secondary">2 игрока · 100 BB старт</span></div><div className="hand-number">Раздача <strong>#{String(game.number).padStart(3, '0')}</strong></div></div><PokerTable game={game} /><div className="table-activity" aria-live="polite"><span className="activity-label">ЗА СТОЛОМ</span><div>{recent.length ? recent.map((event, index) => <span key={`${game.id}-${game.events.length}-${index}`} className={index === recent.length - 1 ? 'latest-event' : ''}>{eventText(event)}</span>) : <span>Блайнды поставлены. Карты розданы — можно начинать.</span>}</div></div><div className="table-bottom"><span><ShieldCheck size={17} />{status === 'saving' ? 'Сохраняем историю и статистику…' : status === 'error' ? 'История ожидает сохранения' : 'История рук сохраняется автоматически'}</span><button className="text-button" onClick={() => setView('history')}>Открыть историю<ArrowUpRight size={17} /></button></div></div><ActionPanel game={game} onAction={act} onNext={beginNext} saving={!saved} paused={paused} seconds={seconds} /></section>
+        <AISettings difficulty={ai.difficulty} profile={heroProfile} disabled={!ai.ready || ai.saving} error={ai.error} onChange={value => void ai.change(value)} />
+        <section className="game-layout" aria-label="Покерный тренажёр"><div className="table-column"><div className="table-heading"><div><span className="table-tab"><Layers3 size={19} />Heads-up</span><span className="table-heading-secondary">2 игрока · 100 BB старт</span></div><div className="hand-number">Раздача <strong>#{String(game.number).padStart(3, '0')}</strong></div></div><PokerTable game={game} difficulty={ai.difficulty} /><div className="table-activity" aria-live="polite"><span className="activity-label">ЗА СТОЛОМ</span><div>{recent.length ? recent.map((event, index) => <span key={`${game.id}-${game.events.length}-${index}`} className={index === recent.length - 1 ? 'latest-event' : ''}>{eventText(event)}</span>) : <span>Блайнды поставлены. Карты розданы — можно начинать.</span>}</div></div><div className="table-bottom"><span><ShieldCheck size={17} />{status === 'saving' ? 'Сохраняем историю и статистику…' : status === 'error' ? 'История ожидает сохранения' : 'История рук сохраняется автоматически'}</span><button className="text-button" onClick={() => setView('history')}>Открыть историю<ArrowUpRight size={17} /></button></div></div><ActionPanel difficulty={ai.difficulty} game={game} onAction={act} onNext={beginNext} saving={!saved} paused={paused} seconds={seconds} /></section>
         <div className="practice-bottom"><div><span className="small-spade">♠</span><p><strong>Практика сегодня. Уверенность за столом завтра.</strong>Играйте, пробуйте разные линии и находите свой подход.</p></div><span><Check size={16} />Локально в вашем браузере</span></div>
       </> : <History hands={hands} loading={status === 'loading'} onPractice={() => setView('practice')} />}
     </main>
-    <footer className="site-footer"><span>POKER LAB<span className="footer-version">v0.2</span></span><span>Создано для осознанной игры.</span><span>TRAINING ONLY<ChevronRight size={16} /></span></footer>
+    <footer className="site-footer"><span>POKER LAB<span className="footer-version">v0.3</span></span><span>Создано для осознанной игры.</span><span>TRAINING ONLY<ChevronRight size={16} /></span></footer>
     {dialog === 'session' && <ConfirmDialog title="Начнём новую сессию?" description={`У каждого игрока снова будет 200 фишек, счётчик раздач в сессии обнулится.${!game.result ? ' Незавершённая раздача не попадёт в историю.' : ''} Общий счёт матчей, всего раздач и история сохранятся.`} confirmLabel="Новая сессия" onClose={() => setDialog(null)} onConfirm={() => { setSession({ game: startHand(), context: newContext(), paused }); setDialog(null); setError('') }} />}
     {dialog === 'score' && <ConfirmDialog title="Сбросить общий счёт матчей?" description="Счёт HERO : AI станет 0 : 0. История рук, оба счётчика раздач и текущий матч сохранятся." confirmLabel="Сбросить счёт" busy={resettingScore} onClose={() => setDialog(null)} onConfirm={() => void clearScore()} />}
   </>
